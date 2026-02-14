@@ -1,0 +1,237 @@
+/* src/pages/retos/retos.css */
+
+/* Fondo */
+.app-shell {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7fbff 0%, #eef6ff 40%, #f4f9ff 100%);
+}
+
+/* Layout */
+.retos-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 22px 60px;
+  font-family: "MetaSubtitle", system-ui, sans-serif; /* ☕ Cafe */
+}
+
+/* Header  */
+.retos-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.retos-h1 {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 44px;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.retos-sub {
+  margin: 6px 0 0;
+  color: rgba(15, 23, 42, 0.65);
+  font-weight: 650;
+  font-size: 18px;
+}
+
+/* Botón Crear (suave) */
+.btn-create {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+
+  padding: 14px 20px;
+  border-radius: 16px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(47, 93, 255, 0.18),
+    rgba(47, 93, 255, 0.12)
+  );
+  border: 1px solid rgba(47, 93, 255, 0.25);
+  color: #1d4ed8;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-create:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(47, 93, 255, 0.15);
+}
+
+/* Toolbar (buscador + filtros) */
+.retos-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 160px;
+  gap: 14px;
+
+  padding: 22px;
+  border-radius: 20px;
+
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+
+  margin: 18px 0 18px;
+}
+
+/* Search */
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 14px 14px;
+  border-radius: 14px;
+
+  background: rgba(245, 250, 255, 0.9);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.searchIcon {
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.searchInput {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-weight: 650;
+  font-size: 16px;
+  color: #0f172a;
+}
+
+/* Botón filtros */
+.btn-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border-radius: 14px;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(15, 23, 42, 0.1);
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-weight: 900;
+  font-size: 16px;
+  color: #0f172a;
+
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.btn-filter:hover {
+  transform: translateY(-1px);
+  background: rgba(15, 23, 42, 0.03);
+}
+
+.btn-filter.active {
+  background: rgba(47, 93, 255, 0.12);
+  border-color: rgba(47, 93, 255, 0.25);
+}
+
+/* Filters panel (opcional) */
+.filtersPanel {
+  padding: 16px;
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+
+  margin-bottom: 18px;
+}
+
+.filtersTitle {
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 10px;
+}
+
+.filtersRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.04);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  font-weight: 800;
+  color: rgba(15, 23, 42, 0.75);
+}
+
+/* Empty state bonito */
+.retos-empty {
+  margin-top: 36px;
+  padding: 42px 30px;
+  border-radius: 22px;
+
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+
+  box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08);
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-weight: 750;
+  font-size: 18px;
+  color: rgba(15, 23, 42, 0.68);
+}
+
+.retos-empty::before {
+  content: "🎯";
+  font-size: 42px;
+  display: block;
+  margin-bottom: 16px;
+}
+
+/* Grid (para cuando conectes data) */
+.retos-grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* Responsive */
+@media (max-width: 980px) {
+  .retos-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .retos-h1 {
+    font-size: 44px;
+  }
+}
+
+@media (max-width: 620px) {
+  .retos-top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .retos-toolbar {
+    grid-template-columns: 1fr;
+  }
+  .retos-h1 {
+    font-size: 38px;
+  }
+}

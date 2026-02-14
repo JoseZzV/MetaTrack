@@ -1,0 +1,243 @@
+.app-shell {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f4f9ff, #eef6ff);
+}
+
+.retoDetail-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 24px 60px;
+}
+
+.retoDetail-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.retoDetail-linkBtn {
+  background: none;
+  border: none;
+  color: #2563eb;
+  font-weight: 900;
+  cursor: pointer;
+  padding: 6px 0;
+}
+
+.retoDetail-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.retoDetail-secondaryBtn,
+.retoDetail-dangerBtn {
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  font-weight: 900;
+  transition: 0.18s ease;
+}
+
+.retoDetail-secondaryBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.retoDetail-dangerBtn {
+  border-color: rgba(248,113,113,.35);
+  background: rgba(248,113,113,.10);
+  color: #7f1d1d;
+}
+
+.retoDetail-dangerBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(248,113,113,.18);
+}
+
+.retoDetail-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow:
+    0 18px 40px rgba(15, 23, 42, 0.08),
+    0 3px 10px rgba(15, 23, 42, 0.05);
+}
+
+.retoDetail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.retoDetail-title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.retoDetail-subtitle {
+  margin: 8px 0 0;
+  color: rgba(15, 23, 42, 0.68);
+  font-weight: 650;
+}
+
+.retoDetail-grid {
+  margin-top: 16px;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .retoDetail-grid { grid-template-columns: 1fr; }
+}
+
+.retoDetail-info {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255,255,255,.92);
+  border-radius: 16px;
+  padding: 12px;
+}
+
+.retoDetail-infoLabel {
+  font-size: 12px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.55);
+}
+
+.retoDetail-infoValue {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 900;
+  color: rgba(15, 23, 42, 0.86);
+}
+
+.retoDetail-section {
+  margin-top: 16px;
+}
+
+.retoDetail-sectionTitle {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.retoDetail-text {
+  margin: 0;
+  color: rgba(15, 23, 42, 0.72);
+  font-weight: 650;
+}
+
+.retoDetail-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.chip-borrador {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.22);
+  color: #92400e;
+}
+
+.retoDetail-alert {
+  margin-top: 14px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(248,113,113,.10);
+  border: 1px solid rgba(248,113,113,.28);
+  color: #7f1d1d;
+  font-weight: 800;
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  z-index: 999;
+}
+
+.modalCard {
+  width: min(480px, 92vw);
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.18),
+    0 6px 18px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(10px);
+}
+
+.modalTitle {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.modalText {
+  margin: 10px 0 0;
+  color: rgba(15, 23, 42, 0.72);
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.modalCancel,
+.modalConfirm {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+  font-weight: 900;
+  transition: 0.18s ease;
+}
+
+.modalCancel:hover {
+  background: rgba(15, 23, 42, 0.04);
+  transform: translateY(-1px);
+}
+
+.modalConfirm {
+  border: none;
+  color: white;
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  box-shadow:
+    0 14px 28px rgba(37, 99, 235, 0.18),
+    0 3px 10px rgba(37, 99, 235, 0.10);
+}
+
+.modalConfirm:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.03);
+}
+
+.modalConfirm.danger {
+  background: linear-gradient(180deg, #ef4444, #dc2626);
+  box-shadow:
+    0 14px 28px rgba(239, 68, 68, 0.18),
+    0 3px 10px rgba(239, 68, 68, 0.10);
+}

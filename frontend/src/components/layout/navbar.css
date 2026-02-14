@@ -1,0 +1,175 @@
+:root{
+  --brand: #2f5dff;
+  --brand2: #1e40af;
+  --text: #0f172a;
+  --muted: rgba(15, 23, 42, 0.65);
+  --line: rgba(15, 23, 42, 0.08);
+  --bg: rgba(255,255,255,0.70);
+}
+
+.navWrap{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(210, 231, 255, 0.50);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* GRID estable: izquierda / centro / derecha */
+.navInner{
+  width: 100%;
+  padding: 14px 22px;
+
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto; /* 🔥 clave */
+  align-items: center;
+  gap: 14px;
+}
+
+/* Brand */
+.navBrand{
+  justify-self: start;
+  user-select: none;
+}
+.navBrandText{
+  font-family: MetaTitle, system-ui, serif;
+  font-weight: 600;        /* 🔥 menos gruesa */
+  font-size: 40px;         /* un poco más fina */
+  letter-spacing: 0.5px;
+  color: #0f172a;
+}
+
+/* Tabs */
+.navTabs{
+  justify-self: center;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 8px;
+  border-radius: 18px;
+
+  background: var(--bg);
+  border: 1px solid rgba(255,255,255,0.65);
+  box-shadow:
+    0 10px 25px rgba(0,0,0,0.06),
+    0 4px 10px rgba(0,0,0,0.04);
+
+  /* ✅ si no caben, scroll */
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.navTabs::-webkit-scrollbar{ display: none; }
+
+.navTab{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 14px;
+  border-radius: 14px;
+
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.98rem;
+  white-space: nowrap;
+
+  text-decoration: none;
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  transition: transform .15s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+}
+
+.navTab:hover{
+  background: rgba(47, 93, 255, 0.10);
+  color: rgba(15, 23, 42, 0.85);
+  transform: translateY(-1px);
+}
+
+.navTab.active{
+  background: linear-gradient(135deg, rgba(47,93,255,0.18), rgba(30,64,175,0.16));
+  color: var(--text);
+  box-shadow: 0 8px 18px rgba(47,93,255,0.15);
+  border: 1px solid rgba(47, 93, 255, 0.18);
+}
+
+/* Right (Usuario + Salir) */
+.navRight{
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap; /* ✅ no se parte */
+}
+
+.navUser{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.65);
+  color: rgba(15, 23, 42, 0.80);
+  font-weight: 700;
+
+  max-width: 170px;
+}
+.navUserText{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navLogout{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.65);
+  color: rgba(15, 23, 42, 0.80);
+  font-weight: 800;
+
+  cursor: pointer;
+  transition: transform .15s ease, background .2s ease;
+}
+
+.navLogout:hover{
+  background: rgba(239, 68, 68, 0.10);
+  transform: translateY(-1px);
+}
+
+/* ✅ Celular: baja en columnas */
+@media (max-width: 920px){
+  .navInner{
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .navBrand{
+    text-align: center;
+  }
+  .navBrandText{
+    font-size: 30px;
+  }
+  .navTabs{
+    justify-self: stretch;
+  }
+  .navRight{
+    justify-self: stretch;
+    justify-content: space-between;
+  }
+}
