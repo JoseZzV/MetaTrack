@@ -3,7 +3,13 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import "./createReto.css";
 
-type RetoType = "Académico" | "Deporte" | "Salud" | "Productividad" | "Personal";
+type RetoType =
+  | "academico"
+  | "deporte"
+  | "salud"
+  | "productividad"
+  | "personal";
+
 
 export default function CreateReto() {
   const navigate = useNavigate();
@@ -111,11 +117,11 @@ export default function CreateReto() {
                   className="createReto-select"
                 >
                   <option value="">Selecciona un tipo</option>
-                  <option value="Académico">Académico</option>
-                  <option value="Deporte">Deporte</option>
-                  <option value="Salud">Salud</option>
-                  <option value="Productividad">Productividad</option>
-                  <option value="Personal">Personal</option>
+                  <option value="academico">Académico</option>
+                  <option value="deporte">Deporte</option>
+                  <option value="salud">Salud</option>
+                  <option value="productividad">Productividad</option>
+                  <option value="personal">Personal</option>
                 </select>
               </div>
 
