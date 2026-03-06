@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import "./createReto.css";
-
+import { createReto } from "../../services/challengeApi";
 type RetoType =
   | "academico"
   | "deporte"
@@ -33,7 +33,7 @@ export default function CreateReto() {
     return `${diff} día${diff === 1 ? "" : "s"}`;
   }, [startDate, endDate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
@@ -59,10 +59,28 @@ export default function CreateReto() {
       return;
     }
 
+  try {
+
+    const challengeData = {
+    title,
+    description,
+    type,
+    rules,
+    start_date: startDate + "T00:00:00",
+    end_date: endDate + "T00:00:00"
+    };
+
+    // llamada al backend
+    await createReto(challengeData);
+
     setSuccess("Reto creado exitosamente");
 
-    // aquí luego conectas con tu back: POST /challenges
     setTimeout(() => navigate("/retos"), 900);
+
+  } catch (err) {
+    setError("Error al crear el reto. Intente nuevamente.");
+    console.error(err);
+  }
   };
 
   return (

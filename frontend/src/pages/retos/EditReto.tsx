@@ -1,15 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import "./createReto.css";
+import { getRetoById, updateReto } from "../../services/challengeApi";
 
 export default function EditReto() {
   const navigate = useNavigate();
   const { id } = useParams();
-
-  // TEMPORAL: control de creador (cuando conectes back, esto se reemplaza)
-  // Cambia esto a false para probar que bloquea el acceso
-  const IS_OWNER = true;
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -20,14 +17,42 @@ export default function EditReto() {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+  if (!id) return;
+
+  const fetchReto = async () => {
+    try {
+      setLoading(true);
+
+      const data = await getRetoById(id);
+
+      setTitle(data.title);
+      setDescription(data.description);
+      setType(data.type);
+      setStartDate(data.start_date.split("T")[0]);
+      setEndDate(data.end_date.split("T")[0]);
+      setRules(data.rules);
+
+    } catch (err) {
+      setError("No se pudo cargar el reto");
+
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchReto();
+}, [id]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
 
     // Escenario 2: campos obligatorios vacíos
-    if (!title || !description || !type || !startDate || !endDate || !rules) {
+    if (!title.trim() || !description.trim() || !type || !startDate || !endDate || !rules) {
       setError("Debe llenar todos los campos solicitados");
       return;
     }
@@ -38,38 +63,40 @@ export default function EditReto() {
       return;
     }
 
-    // Escenario 1: edición exitosa
-    setSuccess("Reto actualizado exitosamente");
+    try {
+    setLoading(true);
 
-    setTimeout(() => {
-      navigate(`/retos/${id}`);
-    }, 900);
+    const challengeData = {
+    title,
+    description,
+    type,
+    rules,
+    start_date: new Date(startDate).toISOString(),
+    end_date: new Date(endDate).toISOString()
   };
 
-  // Si NO es el creador, bloquea edición
-  if (!IS_OWNER) {
-    return (
-      <div className="app-shell">
-        <Navbar />
-        <main className="createReto-page">
-          <h1 className="createReto-title">Editar Reto</h1>
-          <div className="createReto-error">
-            No tienes permiso para editar este reto.
-          </div>
+    await updateReto(id!, challengeData);
 
-          <div className="createReto-actions">
-            <button
-              type="button"
-              className="createReto-cancelBtn"
-              onClick={() => navigate(`/retos/${id}`)}
-            >
-              Volver al reto
-            </button>
-          </div>
-        </main>
-      </div>
-    );
+    setSuccess("Reto actualizado exitosamente");
+
+    setTimeout(() => navigate(`/retos/${id}`), 900);
+
+} catch (err: any) {
+
+  if (err.response?.status === 403) {
+    setError("No tienes permiso para editar este reto");
+    return;
   }
+
+  setError(
+    err.response?.data?.detail ||
+    "Error al actualizar el reto"
+  );
+
+  } finally {
+    setLoading(false);
+  }
+  };
 
   return (
     <div className="app-shell">
@@ -95,11 +122,11 @@ export default function EditReto() {
               className="createReto-select"
             >
               <option value="">Selecciona un tipo</option>
-              <option value="Académico">Académico</option>
-              <option value="Deporte">Deporte</option>
-              <option value="Salud">Salud</option>
-              <option value="Productividad">Productividad</option>
-              <option value="Personal">Personal</option>
+              <option value="academico">Académico</option>
+              <option value="deporte">Deporte</option>
+              <option value="salud">Salud</option>
+              <option value="productividad">Productividad</option>
+              <option value="personal">Personal</option>
             </select>
           </div>
 
@@ -130,8 +157,11 @@ export default function EditReto() {
               Cancelar
             </button>
 
-            <button className="createReto-btn" type="submit">
-              Guardar cambios
+            <button 
+            className="createReto-btn"
+            type="submit"
+            disabled={loading}>
+            {loading ? "Guardando..." : "Guardar cambios"}
             </button>
           </div>
         </form>
