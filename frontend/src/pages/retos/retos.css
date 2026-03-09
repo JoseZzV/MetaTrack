@@ -1,12 +1,8 @@
-/* src/pages/retos/retos.css */
-
-/* Fondo */
 .app-shell {
   min-height: 100vh;
   background: linear-gradient(180deg, #f7fbff 0%, #eef6ff 40%, #f4f9ff 100%);
 }
 
-/* Layout */
 .retos-page {
   max-width: 1200px;
   margin: 0 auto;
@@ -14,7 +10,6 @@
   font-family: "MetaSubtitle", system-ui, sans-serif; /* ☕ Cafe */
 }
 
-/* Header  */
 .retos-top {
   display: flex;
   align-items: flex-start;
@@ -37,8 +32,6 @@
   font-weight: 650;
   font-size: 18px;
 }
-
-/* Botón Crear (suave) */
 .btn-create {
   display: inline-flex;
   align-items: center;
@@ -68,7 +61,6 @@
   box-shadow: 0 20px 40px rgba(47, 93, 255, 0.15);
 }
 
-/* Toolbar (buscador + filtros) */
 .retos-toolbar {
   display: grid;
   grid-template-columns: 1fr 160px;
@@ -86,7 +78,7 @@
   margin: 18px 0 18px;
 }
 
-/* Search */
+
 .searchBox {
   display: flex;
   align-items: center;
@@ -115,7 +107,7 @@
   color: #0f172a;
 }
 
-/* Botón filtros */
+
 .btn-filter {
   display: inline-flex;
   align-items: center;
@@ -146,7 +138,7 @@
   border-color: rgba(47, 93, 255, 0.25);
 }
 
-/* Filters panel (opcional) */
+
 .filtersPanel {
   padding: 16px;
   border-radius: 18px;
@@ -179,7 +171,7 @@
   color: rgba(15, 23, 42, 0.75);
 }
 
-/* Empty state bonito */
+
 .retos-empty {
   margin-top: 36px;
   padding: 42px 30px;
@@ -205,7 +197,7 @@
   margin-bottom: 16px;
 }
 
-/* Grid (para cuando conectes data) */
+
 .retos-grid {
   margin-top: 18px;
   display: grid;
@@ -213,7 +205,6 @@
   gap: 16px;
 }
 
-/* Responsive */
 @media (max-width: 980px) {
   .retos-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -296,4 +287,98 @@
 .reto-status {
   background: #ecfdf3;
   color: #027a48;
+}
+
+.btn-join {
+  margin-top: 18px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 13px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(47, 93, 255, 0.25);
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-weight: 900;
+  font-size: 15px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(47, 93, 255, 0.18),
+    rgba(47, 93, 255, 0.12)
+  );
+  color: #1d4ed8;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-join:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(47, 93, 255, 0.15);
+}
+
+.btn-join:disabled {
+  background: rgba(148, 163, 184, 0.25);
+  border-color: rgba(148, 163, 184, 0.3);
+  color: #64748b;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.floating-banner {
+  position: fixed;
+  top: 95px;
+  right: 24px;
+  z-index: 9999;
+
+  min-width: 280px;
+  max-width: 380px;
+
+  padding: 14px 18px;
+  border-radius: 16px;
+
+  font-weight: 800;
+  font-family: "MetaSubtitle", sans-serif;
+
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+
+  animation: slideInFade 0.35s ease;
+}
+
+.success-banner {
+  background: rgba(236, 253, 243, 0.96);
+  border: 1px solid #a7f3d0;
+  color: #065f46;
+}
+
+.error-banner {
+  background: rgba(254, 242, 242, 0.96);
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+}
+
+@keyframes slideInFade {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) translateX(0);
+  }
+}
+
+@media (max-width: 620px) {
+  .floating-banner {
+    top: 84px;
+    right: 16px;
+    left: 16px;
+    min-width: auto;
+    max-width: none;
+  }
 }

@@ -8,7 +8,7 @@ type Reto = {
 };
 
 function formatRange(startDate: string, endDate: string) {
-  // Simple y estable sin librerías
+
   return `${startDate} → ${endDate}`;
 }
 

@@ -4,6 +4,7 @@ import Navbar from "../../components/layout/Navbar";
 import { Search, Filter, Plus } from "lucide-react";
 import "./retos.css";
 import { getRetos } from "../../services/challengeApi";
+import { getMyParticipations, joinReto } from "../../services/participationApi";
 
 type Reto = {
   id: string;
@@ -19,12 +20,23 @@ type Reto = {
   updated_at: string;
 };
 
+type Participation = {
+  id: string;
+  challenge_id: string;
+  user_id: string;
+  joined_at?: string;
+};
+
 export default function Retos() {
   const navigate = useNavigate();
 
   const [retos, setRetos] = useState<Reto[]>([]);
   const [q, setQ] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [joiningId, setJoiningId] = useState<string | null>(null);
+  const [joinedRetos, setJoinedRetos] = useState<string[]>([]);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRetos = async () => {
@@ -40,9 +52,35 @@ export default function Retos() {
     fetchRetos();
   }, []);
 
+  useEffect(() => {
+    const fetchParticipations = async () => {
+      try {
+        const data: Participation[] = await getMyParticipations();
+        const joinedIds = data.map((item) => item.challenge_id);
+        setJoinedRetos(joinedIds);
+      } catch (error) {
+        console.error("Error cargando participaciones:", error);
+      }
+    };
+
+    fetchParticipations();
+  }, []);
+
+  useEffect(() => {
+    if (successMessage || errorMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+        setErrorMessage(null);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [successMessage, errorMessage]);
+
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
     if (!term) return retos;
+
     return retos.filter(
       (r) =>
         r.title.toLowerCase().includes(term) ||
@@ -54,11 +92,47 @@ export default function Retos() {
     navigate("/retos/crear");
   };
 
+  const handleJoin = async (retoId: string) => {
+    try {
+      setJoiningId(retoId);
+      setSuccessMessage(null);
+      setErrorMessage(null);
+
+      await joinReto(retoId);
+
+      setJoinedRetos((prev) =>
+        prev.includes(retoId) ? prev : [...prev, retoId]
+      );
+      setSuccessMessage("Te uniste al reto correctamente");
+    } catch (error: any) {
+      console.error("Error al unirse al reto:", error);
+
+      const message =
+        error?.response?.data?.detail || "No se pudo unir al reto";
+
+      setErrorMessage(message);
+    } finally {
+      setJoiningId(null);
+    }
+  };
+
   return (
     <div className="app-shell">
       <Navbar />
 
       <main className="retos-page">
+        {successMessage && (
+          <div className="floating-banner success-banner">
+            ✔ {successMessage}
+          </div>
+        )}
+
+        {errorMessage && (
+          <div className="floating-banner error-banner">
+            ✖ {errorMessage}
+          </div>
+        )}
+
         <div className="retos-top">
           <div>
             <h1 className="retos-h1">Explora retos</h1>
@@ -107,7 +181,9 @@ export default function Retos() {
         )}
 
         {filtered.length === 0 ? (
-          <div className="retos-empty">No hay retos disponibles en este momento.</div>
+          <div className="retos-empty">
+            No hay retos disponibles en este momento.
+          </div>
         ) : (
           <section className="retos-grid">
             {filtered.map((reto) => (
@@ -135,6 +211,24 @@ export default function Retos() {
                         : "Cancelado"}
                   </span>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleJoin(reto.id);
+                  }}
+                  disabled={
+                    joiningId === reto.id || joinedRetos.includes(reto.id)
+                  }
+                  className="btn-join"
+                >
+                  {joiningId === reto.id
+                    ? "Uniéndome..."
+                    : joinedRetos.includes(reto.id)
+                      ? "Ya te uniste"
+                      : "Unirme al reto"}
+                </button>
               </article>
             ))}
           </section>
