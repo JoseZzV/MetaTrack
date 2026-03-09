@@ -20,151 +20,166 @@ export default function EditReto() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-  if (!id) return;
+    if (!id) return;
 
-  const fetchReto = async () => {
-    try {
-      setLoading(true);
+    const fetchReto = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-      const data = await getRetoById(id);
+        const data = await getRetoById(id);
 
-      setTitle(data.title);
-      setDescription(data.description);
-      setType(data.type);
-      setStartDate(data.start_date.split("T")[0]);
-      setEndDate(data.end_date.split("T")[0]);
-      setRules(data.rules);
+        setTitle(data.title ?? "");
+        setDescription(data.description ?? "");
+        setType(data.type ?? "");
+        setStartDate(data.start_date?.split("T")[0] ?? "");
+        setEndDate(data.end_date?.split("T")[0] ?? "");
+        setRules(data.rules ?? "");
+      } catch (err) {
+        setError("No se pudo cargar el reto");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    } catch (err) {
-      setError("No se pudo cargar el reto");
-
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchReto();
-}, [id]);
+    fetchReto();
+  }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
 
-    // Escenario 2: campos obligatorios vacíos
-    if (!title.trim() || !description.trim() || !type || !startDate || !endDate || !rules) {
+    if (!id) {
+      setError("No se encontró el reto");
+      return;
+    }
+
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !type ||
+      !startDate ||
+      !endDate ||
+      !rules.trim()
+    ) {
       setError("Debe llenar todos los campos solicitados");
       return;
     }
 
-    // Escenario 3: duración inválida
     if (endDate < startDate) {
       setError("La duración del reto no es válida");
       return;
     }
 
     try {
-    setLoading(true);
+      setLoading(true);
 
-    const challengeData = {
-    title,
-    description,
-    type,
-    rules,
-    start_date: new Date(startDate).toISOString(),
-    end_date: new Date(endDate).toISOString()
-  };
+      const challengeData = {
+        title,
+        description,
+        type,
+        rules,
+        start_date: new Date(startDate).toISOString(),
+        end_date: new Date(endDate).toISOString(),
+      };
 
-    await updateReto(id!, challengeData);
+      await updateReto(id, challengeData);
 
-    setSuccess("Reto actualizado exitosamente");
+      setSuccess("Reto actualizado exitosamente");
 
-    setTimeout(() => navigate(`/retos/${id}`), 900);
+      setTimeout(() => navigate(`/retos/${id}`), 900);
+    } catch (err: any) {
+      if (err.response?.status === 403) {
+        setError("No tienes permiso para editar este reto");
+        return;
+      }
 
-} catch (err: any) {
-
-  if (err.response?.status === 403) {
-    setError("No tienes permiso para editar este reto");
-    return;
-  }
-
-  setError(
-    err.response?.data?.detail ||
-    "Error al actualizar el reto"
-  );
-
-  } finally {
-    setLoading(false);
-  }
+      setError(err.response?.data?.detail || "Error al actualizar el reto");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="app-shell">
       <Navbar />
 
-      <main className="createReto-page">
-        <h1 className="createReto-title">Editar Reto</h1>
-
-        <form className="createReto-form" onSubmit={handleSubmit}>
-          <Input label="Título" value={title} setValue={setTitle} />
-
-          <TextArea
-            label="Descripción"
-            value={description}
-            setValue={setDescription}
-          />
-
-          <div className="createReto-field">
-            <label>Tipo</label>
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="createReto-select"
-            >
-              <option value="">Selecciona un tipo</option>
-              <option value="academico">Académico</option>
-              <option value="deporte">Deporte</option>
-              <option value="salud">Salud</option>
-              <option value="productividad">Productividad</option>
-              <option value="personal">Personal</option>
-            </select>
+      <main className="createReto-wrap">
+        <section className="createReto-modal">
+          <div className="createReto-header">
+            <div>
+              <h1 className="createReto-title">Editar Reto</h1>
+              <p className="createReto-subtitle">
+                Modifica la información de tu reto
+              </p>
+            </div>
           </div>
 
-          <DateInput
-            label="Fecha inicio"
-            value={startDate}
-            setValue={setStartDate}
-          />
+          <div className="createReto-divider"></div>
 
-          <DateInput
-            label="Fecha fin"
-            value={endDate}
-            setValue={setEndDate}
-            min={startDate}
-          />
+          <form className="createReto-form" onSubmit={handleSubmit}>
+            <Input label="Título" value={title} setValue={setTitle} />
 
-          <TextArea label="Reglas" value={rules} setValue={setRules} />
+            <TextArea
+              label="Descripción"
+              value={description}
+              setValue={setDescription}
+            />
 
-          {error && <div className="createReto-error">{error}</div>}
-          {success && <div className="createReto-success">{success}</div>}
+            <div className="createReto-field">
+              <label>Tipo</label>
+              <select
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className="createReto-select"
+              >
+                <option value="">Selecciona un tipo</option>
+                <option value="academico">Académico</option>
+                <option value="deporte">Deporte</option>
+                <option value="salud">Salud</option>
+                <option value="productividad">Productividad</option>
+                <option value="personal">Personal</option>
+              </select>
+            </div>
 
-          <div className="createReto-actions">
-            <button
-              type="button"
-              className="createReto-cancelBtn"
-              onClick={() => navigate(`/retos/${id}`)}
-            >
-              Cancelar
-            </button>
+            <DateInput
+              label="Fecha inicio"
+              value={startDate}
+              setValue={setStartDate}
+            />
 
-            <button 
-            className="createReto-btn"
-            type="submit"
-            disabled={loading}>
-            {loading ? "Guardando..." : "Guardar cambios"}
-            </button>
-          </div>
-        </form>
+            <DateInput
+              label="Fecha fin"
+              value={endDate}
+              setValue={setEndDate}
+              min={startDate}
+            />
+
+            <TextArea label="Reglas" value={rules} setValue={setRules} />
+
+            {error && <div className="createReto-alert error">{error}</div>}
+            {success && <div className="createReto-alert success">{success}</div>}
+
+            <div className="createReto-actions">
+              <button
+                type="button"
+                className="createReto-cancelBtn"
+                onClick={() => navigate(`/retos/${id}`)}
+              >
+                Cancelar
+              </button>
+
+              <button
+                className="createReto-btn"
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Guardando..." : "Guardar cambios"}
+              </button>
+            </div>
+          </form>
+        </section>
       </main>
     </div>
   );

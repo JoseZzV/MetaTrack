@@ -4,8 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Challenge Service")
 
-app.include_router(reto_routes.router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -13,3 +11,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(reto_routes.router)

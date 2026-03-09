@@ -8,6 +8,8 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
+print("CHALLENGE SECRET_KEY:", SECRET_KEY)
+print("CHALLENGE ALGORITHM:", ALGORITHM)
 
 security = HTTPBearer()
 

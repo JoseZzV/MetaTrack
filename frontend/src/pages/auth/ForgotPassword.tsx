@@ -40,7 +40,6 @@ export default function ForgotPassword() {
         "Si el correo existe, te enviaremos instrucciones para restablecer tu contraseña."
       );
     } catch (err) {
-      // Mismo mensaje para no filtrar info de usuarios
       setSuccess(
         "Si el correo existe, te enviaremos instrucciones para restablecer tu contraseña."
       );
@@ -57,34 +56,17 @@ export default function ForgotPassword() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        minHeight: "100vh",
       }}
     >
-      <div className="auth-card" style={{ fontFamily: "MetaText" }}>
+      <div className="auth-card">
         <div className="auth-header">
           <div className="auth-badge">
             <Trophy size={45} />
           </div>
 
-          <h1
-            className="auth-title"
-            style={{
-              fontFamily: "MetaTitle",
-              fontSize: "4rem",
-              fontWeight: "400",
-              letterSpacing: "4px",
-            }}
-          >
-            MetaTrack
-          </h1>
+          <h1 className="auth-title">MetaTrack</h1>
 
-          <p
-            className="auth-subtitle"
-            style={{
-              fontSize: "1.4rem",
-              fontWeight: "500",
-            }}
-          >
+          <p className="auth-subtitle auth-subtitle-recover">
             Recuperar contraseña
           </p>
         </div>

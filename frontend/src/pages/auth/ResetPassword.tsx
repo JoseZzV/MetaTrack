@@ -8,7 +8,7 @@ import loginBg from "../../assets/images/Pink Yellow and Green Playful Get to Kn
 export default function ResetPassword() {
   const navigate = useNavigate();
 
-  const [token, setToken] = useState(""); // token o código
+  const [token, setToken] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
@@ -64,34 +64,17 @@ export default function ResetPassword() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        minHeight: "100vh",
       }}
     >
-      <div className="auth-card" style={{ fontFamily: "MetaText" }}>
+      <div className="auth-card">
         <div className="auth-header">
           <div className="auth-badge">
             <Trophy size={45} />
           </div>
 
-          <h1
-            className="auth-title"
-            style={{
-              fontFamily: "MetaTitle",
-              fontSize: "4rem",
-              fontWeight: "400",
-              letterSpacing: "4px",
-            }}
-          >
-            MetaTrack
-          </h1>
+          <h1 className="auth-title">MetaTrack</h1>
 
-          <p
-            className="auth-subtitle"
-            style={{
-              fontSize: "1.4rem",
-              fontWeight: "500",
-            }}
-          >
+          <p className="auth-subtitle auth-subtitle-recover">
             Restablecer contraseña
           </p>
         </div>
@@ -110,7 +93,7 @@ export default function ResetPassword() {
             </div>
           </div>
 
-          <div className="auth-field">
+          <div className="auth-field auth-field-password">
             <label className="auth-label">Nueva contraseña</label>
             <div className="auth-inputWrap">
               <Lock className="auth-icon" size={18} />
@@ -125,7 +108,7 @@ export default function ResetPassword() {
             </div>
           </div>
 
-          <div className="auth-field">
+          <div className="auth-field auth-field-password">
             <label className="auth-label">Confirmar contraseña</label>
             <div className="auth-inputWrap">
               <Lock className="auth-icon" size={18} />

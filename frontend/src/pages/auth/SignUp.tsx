@@ -61,7 +61,6 @@ export default function SignUp() {
       setTimeout(() => {
         navigate("/login");
       }, 900);
-
     } catch (err: any) {
       setLoading(false);
 
@@ -86,34 +85,17 @@ export default function SignUp() {
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        minHeight: "100vh",
       }}
     >
-      <div className="auth-card" style={{ fontFamily: "MetaText" }}>
+      <div className="auth-card">
         <div className="auth-header">
           <div className="auth-badge">
             <Trophy size={45} />
           </div>
 
-          <h1
-            className="auth-title"
-            style={{
-              fontFamily: "MetaTitle",
-              fontSize: "4rem",
-              fontWeight: "400",
-              letterSpacing: "4px",
-            }}
-          >
-            MetaTrack
-          </h1>
+          <h1 className="auth-title">MetaTrack</h1>
 
-          <p
-            className="auth-subtitle"
-            style={{
-              fontSize: "1.3rem",
-              fontWeight: "500",
-            }}
-          >
+          <p className="auth-subtitle">
             Plataforma de retos para desarrollo personal
           </p>
         </div>
@@ -134,7 +116,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="auth-field">
+          <div className="auth-field auth-field-password">
             <label className="auth-label">Correo electrónico</label>
             <div className="auth-inputWrap">
               <Mail className="auth-icon" size={18} />
@@ -149,7 +131,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="auth-field">
+          <div className="auth-field auth-field-password">
             <label className="auth-label">Contraseña</label>
             <div className="auth-inputWrap">
               <Lock className="auth-icon" size={18} />
@@ -164,7 +146,7 @@ export default function SignUp() {
             </div>
           </div>
 
-          <div className="auth-field">
+          <div className="auth-field auth-field-password">
             <label className="auth-label">Confirmar contraseña</label>
             <div className="auth-inputWrap">
               <Lock className="auth-icon" size={18} />

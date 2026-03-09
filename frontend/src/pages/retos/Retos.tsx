@@ -1,26 +1,44 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";   // ✅ AÑADE ESTO
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/layout/Navbar";
 import { Search, Filter, Plus } from "lucide-react";
 import "./retos.css";
+import { getRetos } from "../../services/challengeApi";
 
 type Reto = {
   id: string;
   title: string;
-  description: string;
-  category: string;
-  difficulty: string;
-  participants: number;
-  days: number;
-  points: number;
+  description: string | null;
+  type: "academico" | "deporte" | "salud" | "productividad" | "personal";
+  rules: string | null;
+  start_date: string;
+  end_date: string;
+  creator_user_id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export default function Retos() {
-  const navigate = useNavigate();                 // ✅ AÑADE ESTO
+  const navigate = useNavigate();
 
-  const [retos] = useState<Reto[]>([]);
+  const [retos, setRetos] = useState<Reto[]>([]);
   const [q, setQ] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+
+  useEffect(() => {
+    const fetchRetos = async () => {
+      try {
+        const data = await getRetos();
+        console.log("Retos desde backend:", data);
+        setRetos(data);
+      } catch (error) {
+        console.error("Error cargando retos:", error);
+      }
+    };
+
+    fetchRetos();
+  }, []);
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
@@ -28,12 +46,12 @@ export default function Retos() {
     return retos.filter(
       (r) =>
         r.title.toLowerCase().includes(term) ||
-        r.description.toLowerCase().includes(term)
+        (r.description ?? "").toLowerCase().includes(term)
     );
   }, [q, retos]);
 
   const openCreate = () => {
-    navigate("/retos/crear");                     // ✅ AQUÍ
+    navigate("/retos/crear");
   };
 
   return (
@@ -91,7 +109,35 @@ export default function Retos() {
         {filtered.length === 0 ? (
           <div className="retos-empty">No hay retos disponibles en este momento.</div>
         ) : (
-          <section className="retos-grid"></section>
+          <section className="retos-grid">
+            {filtered.map((reto) => (
+              <article
+                key={reto.id}
+                className="reto-card"
+                onClick={() => navigate(`/retos/${reto.id}`)}
+              >
+                <h3 className="reto-title">{reto.title}</h3>
+
+                <p className="reto-description">
+                  {reto.description ?? "Sin descripción"}
+                </p>
+
+                <div className="reto-meta">
+                  <span className="reto-type">
+                    {reto.type.charAt(0).toUpperCase() + reto.type.slice(1)}
+                  </span>
+
+                  <span className="reto-status">
+                    {reto.status === "active"
+                      ? "Activo"
+                      : reto.status === "finished"
+                        ? "Finalizado"
+                        : "Cancelado"}
+                  </span>
+                </div>
+              </article>
+            ))}
+          </section>
         )}
       </main>
     </div>
