@@ -1,8 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/auth/LogIn";
 import SignUp from "./pages/auth/SignUp";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import ResetPassword from "./pages/auth/ResetPassword";
 import Retos from "./pages/retos/Retos";
 import CreateReto from "./pages/retos/CreateReto";
 import EditReto from "./pages/retos/EditReto";
@@ -15,8 +13,6 @@ export default function App() {
       {/* Auth */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
-      <Route path="/forgot" element={<ForgotPassword />} />
-      <Route path="/reset" element={<ResetPassword />} />
 
       {/* Parte privada */}
       <Route path="/retos" element={<Retos />} />

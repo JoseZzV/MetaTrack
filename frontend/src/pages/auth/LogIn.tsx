@@ -104,14 +104,6 @@ export default function LogIn() {
           <button
             type="button"
             className="auth-link"
-            onClick={() => navigate("/forgot")}
-          >
-            ¿Olvidaste tu contraseña?
-          </button>
-
-          <button
-            type="button"
-            className="auth-link"
             onClick={() => navigate("/signup")}
           >
             ¿No tienes cuenta? Regístrate
