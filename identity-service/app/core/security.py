@@ -10,8 +10,6 @@ load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY", "super-secret-key")
 ALGORITHM = "HS256"
-print("IDENTITY SECRET_KEY:", SECRET_KEY)
-print("IDENTITY ALGORITHM:", ALGORITHM)
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 # Hash 
