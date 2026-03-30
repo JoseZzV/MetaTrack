@@ -1,5 +1,6 @@
 from app.db.database import participations_collection
 from datetime import datetime, timezone
+from bson import ObjectId
 
 collection = participations_collection
 
@@ -46,3 +47,13 @@ def find_by_challenge(challenge_id: str):
     })
 
     return list(participations)
+
+
+# Actualizar status
+def update_status(participation_id: str, new_status: str):
+    collection.update_one(
+        {"_id": ObjectId(participation_id)},
+        {"$set": {"status": new_status}}
+    )
+
+    return collection.find_one({"_id": ObjectId(participation_id)})

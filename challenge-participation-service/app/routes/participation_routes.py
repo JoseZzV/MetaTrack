@@ -49,3 +49,16 @@ def get_participants_by_challenge(challenge_id: str):
 
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+
+@router.patch("/{challenge_id}/abandon", response_model=ParticipationResponse)
+def abandon_challenge(
+    challenge_id: str,
+    user_data: dict = Depends(get_current_user)
+):
+    user_id = user_data["sub"]
+
+    return participation_service.abandon_challenge_service(
+        challenge_id,
+        user_id
+    )

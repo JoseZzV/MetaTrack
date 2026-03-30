@@ -54,3 +54,38 @@ def get_participants_by_challenge_service(challenge_id: str):
     participations = participation_repository.find_by_challenge(challenge_id)
 
     return [_format_participation(p) for p in participations]
+
+def abandon_challenge_service(challenge_id: str, user_id: str):
+
+    # 1. Buscar participación
+    participation = participation_repository.find_by_user_and_challenge(
+        user_id,
+        challenge_id
+    )
+
+    if not participation:
+        raise HTTPException(
+            status_code=404,
+            detail="No estás participando en este reto"
+        )
+
+    # 2. Validar estado
+    if participation["status"] == "abandoned":
+        raise HTTPException(
+            status_code=400,
+            detail="Ya abandonaste este reto"
+        )
+
+    if participation["status"] == "completed":
+        raise HTTPException(
+            status_code=400,
+            detail="El reto ya fue completado"
+        )
+
+    # 3. Actualizar estado
+    updated = participation_repository.update_status(
+        str(participation["_id"]),
+        "abandoned"
+    )
+
+    return _format_participation(updated)
