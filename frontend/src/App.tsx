@@ -5,6 +5,8 @@ import Retos from "./pages/retos/Retos";
 import CreateReto from "./pages/retos/CreateReto";
 import EditReto from "./pages/retos/EditReto";
 import RetoDetail from "./pages/retos/RetoDetail";
+import Profile from "./pages/profile/Profile";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 import "./App.css";
 
 export default function App() {
@@ -14,12 +16,51 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
 
-      {/* Parte privada */}
-      <Route path="/retos" element={<Retos />} />
-      <Route path="/retos/crear" element={<CreateReto />} />
-      <Route path="/retos/:id/editar" element={<EditReto />} />
-      <Route path="/retos/:id" element={<RetoDetail />} />
+      {/* Privadas */}
+      <Route
+        path="/retos"
+        element={
+          <ProtectedRoute>
+            <Retos />
+          </ProtectedRoute>
+        }
+      />
 
+      <Route
+        path="/retos/crear"
+        element={
+          <ProtectedRoute>
+            <CreateReto />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/retos/:id/editar"
+        element={
+          <ProtectedRoute>
+            <EditReto />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/retos/:id"
+        element={
+          <ProtectedRoute>
+            <RetoDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Default */}
       <Route path="*" element={<Navigate to="/login" replace />} />

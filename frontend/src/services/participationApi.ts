@@ -31,3 +31,11 @@ export const getMyParticipations = async () => {
   const res = await participationApi.get("/participations/me");
   return res.data;
 };
+
+//Abandonar reto 
+export const abandonReto = async (challengeId: string) => {
+  const res = await participationApi.patch(
+    `/participations/${challengeId}/abandon`
+  );
+  return res.data;
+};

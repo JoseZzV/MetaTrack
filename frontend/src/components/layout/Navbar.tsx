@@ -1,32 +1,32 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Trophy, TrendingUp, Gift, LogOut, User } from "lucide-react";
+import { Trophy, TrendingUp, Gift, LogOut } from "lucide-react";
 import "./navbar.css";
 
-type Props = { username?: string };
-
-export default function Navbar({ username = "Usuario" }: Props) {
+export default function Navbar() {
   const navigate = useNavigate();
+
+  const username = localStorage.getItem("name") || "Usuario";
+  const userInitial = username.charAt(0).toUpperCase();
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("name");
+    localStorage.removeItem("email");
     navigate("/login");
+  };
+
+  const handleGoToProfile = () => {
+    navigate("/profile");
   };
 
   return (
     <header className="navWrap">
       <div className="navInner">
-        {/* Left: Brand */}
         <div className="navBrand">
           <span className="navBrandText">MetaTrack</span>
         </div>
 
-        {/* Center: Tabs */}
         <nav className="navTabs" aria-label="Navegación principal">
-          <button type="button" className="navTab">
-            <LayoutDashboard size={18} />
-            <span>Dashboard</span>
-          </button>
-
           <NavLink
             to="/retos"
             className={({ isActive }) => `navTab ${isActive ? "active" : ""}`}
@@ -46,12 +46,11 @@ export default function Navbar({ username = "Usuario" }: Props) {
           </button>
         </nav>
 
-        {/* Right: User + Logout */}
         <div className="navRight">
-          <div className="navUser">
-            <User size={18} />
+          <button type="button" className="navUser" onClick={handleGoToProfile}>
+            <span className="navAvatar">{userInitial}</span>
             <span className="navUserText">{username}</span>
-          </div>
+          </button>
 
           <button className="navLogout" onClick={handleLogout}>
             <LogOut size={18} />

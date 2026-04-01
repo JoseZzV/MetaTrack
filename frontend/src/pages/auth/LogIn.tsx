@@ -31,7 +31,14 @@ export default function LogIn() {
         password,
       });
 
-      localStorage.setItem("token", res.data.access_token);
+      const token = res.data.access_token;
+
+      localStorage.setItem("token", token);
+    
+      const payload = JSON.parse(atob(token.split(".")[1]));
+
+      localStorage.setItem("name", payload.name);
+      localStorage.setItem("email", payload.email);
 
       setTimeout(() => navigate("/retos"), 400);
     } catch (err) {

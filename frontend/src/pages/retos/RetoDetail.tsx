@@ -34,7 +34,6 @@ export default function RetoDetail() {
 
       try {
         const data = await getRetoById(id);
-        console.log("Reto desde backend:", data);
         setReto(data);
       } catch (error) {
         console.error("Error cargando reto:", error);
@@ -133,7 +132,7 @@ export default function RetoDetail() {
             type="button"
             onClick={() => navigate("/retos")}
           >
-            ← Volver a Retos
+            Volver a Retos
           </button>
 
           <div className="retoDetail-actions">
@@ -192,7 +191,18 @@ export default function RetoDetail() {
 
             <div className="retoDetail-sectionCard">
               <h3 className="retoDetail-sectionTitle">Reglas</h3>
-              <p className="retoDetail-text">{reto.rules ?? "Sin reglas"}</p>
+
+              {reto.rules ? (
+                <ul className="retoDetail-list">
+                  {reto.rules.split(".").map((rule, index) =>
+                    rule.trim() !== "" ? (
+                      <li key={index}>{rule.trim()}</li>
+                    ) : null
+                  )}
+                </ul>
+              ) : (
+                <p className="retoDetail-text">Sin reglas</p>
+              )}
             </div>
           </div>
 

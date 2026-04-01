@@ -40,21 +40,22 @@ def login_user(user: UserLogin):
     db_user = get_user_by_email(user.email)
     if not db_user:
         raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Credenciales incorrectas"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales incorrectas"
         )
 
     # 2. Verificar contraseña
     if not verify_password(user.password, db_user["password"]):
         raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Credenciales incorrectas"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales incorrectas"
         )
 
-    # 3. Crear token JWT
+    # 3. Crear token JWT 
     token = create_access_token({
-        "sub": db_user["_id"],
-        "email": db_user["email"]
+        "sub": str(db_user["_id"]),
+        "email": db_user["email"],
+        "name": db_user["name"]
     })
 
     return {

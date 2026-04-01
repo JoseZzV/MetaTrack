@@ -90,7 +90,7 @@ def delete_reto_service(
     if not current_reto:
         raise ValueError("Reto no encontrado")
 
-    # 🔐 Validar ownership
+    # Validar ownership
     if current_reto["creator_user_id"] != user_id:
         raise ValueError("No tienes permiso para eliminar este reto")
 

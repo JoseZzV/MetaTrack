@@ -4,7 +4,11 @@ import Navbar from "../../components/layout/Navbar";
 import { Search, Filter, Plus } from "lucide-react";
 import "./retos.css";
 import { getRetos } from "../../services/challengeApi";
-import { getMyParticipations, joinReto } from "../../services/participationApi";
+import {
+  getMyParticipations,
+  joinReto,
+  abandonReto,
+} from "../../services/participationApi";
 
 type Reto = {
   id: string;
@@ -24,6 +28,7 @@ type Participation = {
   id: string;
   challenge_id: string;
   user_id: string;
+  status: string;
   joined_at?: string;
 };
 
@@ -37,6 +42,9 @@ export default function Retos() {
   const [joinedRetos, setJoinedRetos] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [showAbandonModal, setShowAbandonModal] = useState(false);
+  const [selectedRetoId, setSelectedRetoId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchRetos = async () => {
@@ -56,7 +64,11 @@ export default function Retos() {
     const fetchParticipations = async () => {
       try {
         const data: Participation[] = await getMyParticipations();
-        const joinedIds = data.map((item) => item.challenge_id);
+
+        const joinedIds = data
+          .filter((item) => item.status === "active")
+          .map((item) => item.challenge_id);
+
         setJoinedRetos(joinedIds);
       } catch (error) {
         console.error("Error cargando participaciones:", error);
@@ -103,6 +115,7 @@ export default function Retos() {
       setJoinedRetos((prev) =>
         prev.includes(retoId) ? prev : [...prev, retoId]
       );
+
       setSuccessMessage("Te uniste al reto correctamente");
     } catch (error: any) {
       console.error("Error al unirse al reto:", error);
@@ -114,6 +127,42 @@ export default function Retos() {
     } finally {
       setJoiningId(null);
     }
+  };
+
+  const handleAbandon = (retoId: string) => {
+    setSelectedRetoId(retoId);
+    setShowAbandonModal(true);
+  };
+
+  const confirmAbandonReto = async () => {
+    if (!selectedRetoId) return;
+
+    try {
+      setJoiningId(selectedRetoId);
+      setSuccessMessage(null);
+      setErrorMessage(null);
+
+      await abandonReto(selectedRetoId);
+
+      setJoinedRetos((prev) => prev.filter((id) => id !== selectedRetoId));
+      setSuccessMessage("Abandonaste el reto correctamente");
+    } catch (error: any) {
+      console.error("Error al abandonar el reto:", error);
+
+      const message =
+        error?.response?.data?.detail || "No se pudo abandonar el reto";
+
+      setErrorMessage(message);
+    } finally {
+      setJoiningId(null);
+      setSelectedRetoId(null);
+      setShowAbandonModal(false);
+    }
+  };
+
+  const closeAbandonModal = () => {
+    setShowAbandonModal(false);
+    setSelectedRetoId(null);
   };
 
   return (
@@ -216,22 +265,56 @@ export default function Retos() {
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleJoin(reto.id);
+
+                    if (joinedRetos.includes(reto.id)) {
+                      handleAbandon(reto.id);
+                    } else {
+                      handleJoin(reto.id);
+                    }
                   }}
-                  disabled={
-                    joiningId === reto.id || joinedRetos.includes(reto.id)
-                  }
-                  className="btn-join"
+                  disabled={joiningId === reto.id}
+                  className={`btn-join ${
+                    joinedRetos.includes(reto.id) ? "btn-abandon" : ""
+                  }`}
                 >
                   {joiningId === reto.id
-                    ? "Uniéndome..."
+                    ? "Procesando..."
                     : joinedRetos.includes(reto.id)
-                      ? "Ya te uniste"
+                      ? "Abandonar reto"
                       : "Unirme al reto"}
                 </button>
               </article>
             ))}
           </section>
+        )}
+
+        {showAbandonModal && (
+          <div className="modal-overlay">
+            <div className="modal-box">
+              <h3 className="modal-title">Abandonar reto</h3>
+              <p className="modal-text">
+                ¿Estás seguro de que deseas abandonar este reto?
+              </p>
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="modal-cancel"
+                  onClick={closeAbandonModal}
+                >
+                  Cancelar
+                </button>
+
+                <button
+                  type="button"
+                  className="modal-confirm"
+                  onClick={confirmAbandonReto}
+                >
+                  Sí, abandonar
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </main>
     </div>
