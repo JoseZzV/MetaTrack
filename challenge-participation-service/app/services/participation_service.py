@@ -108,3 +108,18 @@ def abandon_challenge_service(challenge_id: str, user_id: str):
     )
 
     return _format_participation(updated)
+
+def get_participation_by_user_and_challenge_service(user_id: str, challenge_id: str):
+
+    participation = participation_repository.find_by_user_and_challenge(
+        user_id,
+        challenge_id
+    )
+
+    if not participation:
+        raise HTTPException(
+            status_code=404,
+            detail="No estás participando en este reto"
+        )
+
+    return _format_participation(participation)

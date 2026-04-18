@@ -62,3 +62,15 @@ def abandon_challenge(
         challenge_id,
         user_id
     )
+
+@router.get("/{challenge_id}/me", response_model=ParticipationResponse)
+def get_my_participation_by_challenge(
+    challenge_id: str,
+    user_data: dict = Depends(get_current_user)
+):
+    user_id = user_data["sub"]
+
+    return participation_service.get_participation_by_user_and_challenge_service(
+        user_id,
+        challenge_id
+    )
