@@ -35,10 +35,13 @@ export default function Navbar() {
             <span>Retos</span>
           </NavLink>
 
-          <button type="button" className="navTab">
+          <NavLink
+            to="/progreso"
+            className={({ isActive }) => `navTab ${isActive ? "active" : ""}`}
+          >
             <TrendingUp size={18} />
             <span>Progreso</span>
-          </button>
+          </NavLink>
 
           <button type="button" className="navTab">
             <Gift size={18} />

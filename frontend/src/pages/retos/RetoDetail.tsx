@@ -4,6 +4,11 @@ import Navbar from "../../components/layout/Navbar";
 import "./retoDetail.css";
 import ConfirmModal from "../../components/ui/ConfirmModal";
 import { deleteReto, getRetoById } from "../../services/challengeApi";
+import {
+  getMyProgressByChallenge,
+  registerProgress,
+  type ProgressItem,
+} from "../../services/progressApi";
 
 type Reto = {
   id: string;
@@ -28,6 +33,13 @@ export default function RetoDetail() {
   const [openDelete, setOpenDelete] = useState(false);
   const [reto, setReto] = useState<Reto | null>(null);
 
+  const [progressList, setProgressList] = useState<ProgressItem[]>([]);
+  const [progressDescription, setProgressDescription] = useState("");
+  const [progressDate, setProgressDate] = useState("");
+  const [progressMessage, setProgressMessage] = useState<string | null>(null);
+  const [loadingProgress, setLoadingProgress] = useState(false);
+  const [savingProgress, setSavingProgress] = useState(false);
+
   useEffect(() => {
     const fetchReto = async () => {
       if (!id) return;
@@ -41,6 +53,24 @@ export default function RetoDetail() {
     };
 
     fetchReto();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      if (!id) return;
+
+      try {
+        setLoadingProgress(true);
+        const data = await getMyProgressByChallenge(id);
+        setProgressList(data);
+      } catch (error) {
+        console.error("Error cargando progreso:", error);
+      } finally {
+        setLoadingProgress(false);
+      }
+    };
+
+    fetchProgress();
   }, [id]);
 
   const handleDeleteClick = () => {
@@ -74,6 +104,44 @@ export default function RetoDetail() {
 
   const cancelDelete = () => {
     setOpenDelete(false);
+  };
+
+  const handleRegisterProgress = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProgressMessage(null);
+
+    if (!id) return;
+
+    if (!progressDescription.trim()) {
+      setProgressMessage("Debes escribir una descripción del progreso");
+      return;
+    }
+
+    try {
+      setSavingProgress(true);
+
+      await registerProgress({
+        challenge_id: id,
+        progress_date: progressDate || undefined,
+        description: progressDescription.trim(),
+      });
+
+      setProgressMessage("Progreso registrado correctamente");
+      setProgressDescription("");
+      setProgressDate("");
+
+      const updatedProgress = await getMyProgressByChallenge(id);
+      setProgressList(updatedProgress);
+    } catch (error: any) {
+      console.error("Error registrando progreso:", error);
+
+      const backendMessage =
+        error?.response?.data?.detail || "No se pudo registrar el progreso";
+
+      setProgressMessage(backendMessage);
+    } finally {
+      setSavingProgress(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -216,6 +284,105 @@ export default function RetoDetail() {
           </div>
 
           {message && <div className="retoDetail-alert">{message}</div>}
+        </section>
+
+        <section className="retoDetail-card retoProgress-card">
+          <div className="retoDetail-header">
+            <div>
+              <h2 className="retoProgress-title">Registrar progreso</h2>
+              <p className="retoDetail-subtitle">
+                Guarda tu avance diario en este reto.
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleRegisterProgress} className="retoProgress-form">
+            <div className="retoProgress-field">
+              <label className="retoProgress-label">Fecha</label>
+              <input
+                className="retoProgress-input"
+                type="date"
+                value={progressDate}
+                onChange={(e) => setProgressDate(e.target.value)}
+              />
+            </div>
+
+            <div className="retoProgress-field">
+              <label className="retoProgress-label">
+                Descripción del progreso
+              </label>
+              <textarea
+                className="retoProgress-textarea"
+                value={progressDescription}
+                onChange={(e) => setProgressDescription(e.target.value)}
+                placeholder="Ejemplo: Hoy avancé 2 módulos del curso y resolví 5 ejercicios."
+              />
+            </div>
+
+            <div className="retoProgress-actions">
+              <button
+                type="submit"
+                className="retoDetail-secondaryBtn"
+                disabled={savingProgress}
+              >
+                {savingProgress ? "Guardando..." : "Registrar progreso"}
+              </button>
+            </div>
+          </form>
+
+          {progressMessage && (
+            <div
+              className={`retoDetail-alert ${
+                progressMessage === "Progreso registrado correctamente"
+                  ? "retoDetail-alertSuccess"
+                  : ""
+              }`}
+            >
+              {progressMessage}
+            </div>
+          )}
+        </section>
+
+        <section className="retoDetail-card retoProgress-card">
+          <div className="retoDetail-header">
+            <div>
+              <h2 className="retoProgress-title">Mi progreso</h2>
+              <p className="retoDetail-subtitle">
+                Aquí puedes ver el avance registrado por fecha.
+              </p>
+            </div>
+          </div>
+
+          {loadingProgress ? (
+            <p className="retoDetail-text">Cargando progreso...</p>
+          ) : progressList.length === 0 ? (
+            <div className="retoProgress-empty">
+              <p className="retoDetail-text">
+                Aún no has registrado progreso en este reto.
+              </p>
+            </div>
+          ) : (
+            <div className="retoProgress-list">
+              {progressList
+                .slice()
+                .sort(
+                  (a, b) =>
+                    new Date(b.progress_date).getTime() -
+                    new Date(a.progress_date).getTime()
+                )
+                .map((item) => (
+                  <article key={item.id} className="retoProgress-item">
+                    <div className="retoProgress-itemTop">
+                      <span className="retoProgress-date">
+                        {formatDate(item.progress_date)}
+                      </span>
+                    </div>
+
+                    <p className="retoDetail-text">{item.description}</p>
+                  </article>
+                ))}
+            </div>
+          )}
         </section>
 
         <ConfirmModal

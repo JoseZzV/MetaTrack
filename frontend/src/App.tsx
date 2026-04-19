@@ -6,17 +6,16 @@ import CreateReto from "./pages/retos/CreateReto";
 import EditReto from "./pages/retos/EditReto";
 import RetoDetail from "./pages/retos/RetoDetail";
 import Profile from "./pages/profile/Profile";
+import Progreso from "./pages/progreso/Progreso";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import "./App.css";
 
 export default function App() {
   return (
     <Routes>
-      {/* Auth */}
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
 
-      {/* Privadas */}
       <Route
         path="/retos"
         element={
@@ -62,7 +61,15 @@ export default function App() {
         }
       />
 
-      {/* Default */}
+      <Route
+        path="/progreso"
+        element={
+          <ProtectedRoute>
+            <Progreso />
+          </ProtectedRoute>
+        }
+      />
+
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
