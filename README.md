@@ -4,14 +4,14 @@ Este documento detalla los pasos necesarios para ejecutar el entorno de desarrol
 
 ---
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 * Tener instalado **Node.js** y **Python 3.10+**.
 * Archivos `.env` configurados en cada servicio.
 * Entornos virtuales (`venv`) listos.
 
 ---
 
-## 🚀 Pasos para Iniciar
+## Pasos para Iniciar
 
 ### 1. Frontend
 ```bash
