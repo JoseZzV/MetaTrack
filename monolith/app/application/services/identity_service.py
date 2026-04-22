@@ -1,6 +1,6 @@
-from app.repositories.identity_repository import create_user, get_user_by_email
-from app.core.security import hash_password, verify_password, create_access_token
-from app.schemas.user_schema import UserRegister, UserLogin
+from app.infrastructure.repositories.identity_repository import create_user, get_user_by_email
+from app.infrastructure.core.security import hash_password, verify_password, create_access_token
+from app.presentation.schemas.user_schema import UserRegister, UserLogin
 from fastapi import HTTPException, status
 
 

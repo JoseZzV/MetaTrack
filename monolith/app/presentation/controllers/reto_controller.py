@@ -1,9 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import List
-from app.schemas.reto import RetoCreate, RetoUpdate
-from app.services import reto_service
-from app.core.auth import get_current_user
-from app.schemas.reto import RetoResponse
+from app.presentation.schemas.reto import RetoCreate, RetoUpdate
+from app.application.services import reto_service
+from app.infrastructure.core.auth import get_current_user
+from app.presentation.schemas.reto import RetoResponse
 
 
 router = APIRouter(prefix="/retos", tags=["Retos"])

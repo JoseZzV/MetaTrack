@@ -1,7 +1,7 @@
 from bson import ObjectId
-from app.repositories import reto_repository
-from app.repositories.identity_repository import get_user_by_id
-from app.repositories import identity_repository
+from app.infrastructure.repositories import reto_repository
+from app.infrastructure.repositories.identity_repository import get_user_by_id
+from app.infrastructure.repositories import identity_repository
 
 
 # Helper para convertir ObjectId a str

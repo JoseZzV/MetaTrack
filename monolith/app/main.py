@@ -2,7 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 # Importar controllers (antes routes)
-from app.controllers import identity_controller, reto_controller
+from app.presentation.controllers import reto_controller
+from app.presentation.controllers import identity_controller
 
 app = FastAPI(
     title="MetaTrack Monolith",
@@ -27,5 +28,5 @@ app.include_router(reto_controller.router)
 @app.get("/")
 def root():
     return {
-        "message": "MetaTrack Monolith funcionando 🚀"
+        "message": "MetaTrack Monolith funcionando"
     }

@@ -1,4 +1,4 @@
-from app.db.database import db
+from app.infrastructure.db.database import db
 from typing import Optional, Dict
 from datetime import datetime
 from bson import ObjectId

@@ -1,4 +1,4 @@
-from app.db.database import db
+from app.infrastructure.db.database import db
 from datetime import datetime, timezone
 from bson import ObjectId
 from pymongo import ReturnDocument
