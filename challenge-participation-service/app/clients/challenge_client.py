@@ -1,13 +1,8 @@
-import os
 import requests
-from dotenv import load_dotenv
+from app.core.config import CHALLENGE_SERVICE_URL
 
-load_dotenv()
-
-CHALLENGE_SERVICE_URL = os.getenv("CHALLENGE_SERVICE_URL")
 if not CHALLENGE_SERVICE_URL:
     raise ValueError("CHALLENGE_SERVICE_URL no está definido en el .env")
-
 
 
 def get_challenge_by_id(challenge_id: str):

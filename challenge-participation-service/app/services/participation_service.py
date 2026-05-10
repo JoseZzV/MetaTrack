@@ -14,12 +14,20 @@ def join_challenge_service(challenge_id: str, user_id: str):
 
     # 1. verificar que el reto existe
     challenge = get_challenge_by_id(challenge_id)
+    
 
     if not challenge:
         raise HTTPException(
             status_code=404,
             detail="Challenge no encontrado"
         )
+    
+    if challenge["status"] == "finished":
+        raise HTTPException(
+        status_code=400,
+        detail="Este reto ya no está disponible"
+    )
+    
 
     # 2. verificar si el usuario ya participa
     existing = participation_repository.find_by_user_and_challenge(

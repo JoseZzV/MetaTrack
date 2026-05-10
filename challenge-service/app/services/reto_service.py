@@ -1,9 +1,15 @@
 from bson import ObjectId
 from app.repositories import reto_repository
-
+from datetime import datetime, timezone
 
 # Helper para convertir ObjectId a str
 def _format_reto(reto: dict) -> dict:
+    now = datetime.now(timezone.utc)
+    if reto["status"] != "cancelled":
+        if reto["end_date"] < now:
+            reto["status"] = "finished"
+        else:
+            reto["status"] = "active"
     reto["id"] = str(reto["_id"])
     del reto["_id"]
     return reto
