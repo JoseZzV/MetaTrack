@@ -38,3 +38,12 @@ def find_by_user_and_challenge(user_id: str, challenge_id: str):
     })
 
     return list(progress_list)
+
+# Obtener progreso reciente de un usuario
+def find_recent_by_user(user_id: str):
+
+    progress_list = collection.find({
+        "user_id": user_id
+    }).sort("created_at", -1)
+
+    return list(progress_list)

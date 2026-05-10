@@ -27,3 +27,22 @@ def get_my_participation_by_challenge(token: str, challenge_id: str):
 
     except requests.exceptions.RequestException:
         return None
+    
+def get_my_participations(token: str):
+
+    url = f"{PARTICIPATION_SERVICE_URL}/participations/me"
+
+    headers = {
+        "Authorization": f"Bearer {token}"
+    }
+
+    try:
+        response = requests.get(url, headers=headers)
+
+        if response.status_code == 200:
+            return response.json()
+
+        return None
+
+    except requests.exceptions.RequestException:
+        return None

@@ -1,10 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from typing import List
-
 from app.schemas.progress_schema import ProgressCreate, ProgressResponse
 from app.services import progress_service
 from app.core.auth import get_current_user
-
+from app.schemas.progress_schema import ProgressSummaryResponse
 
 router = APIRouter(prefix="/progress", tags=["Progress"])
 
@@ -19,7 +18,7 @@ def create_progress(
     try:
         user_id = user_data["sub"]
 
-        # 🔥 EXTRAER TOKEN REAL DEL HEADER
+        # EXTRAER TOKEN REAL DEL HEADER
         auth_header = request.headers.get("Authorization")
         if not auth_header:
             raise HTTPException(status_code=401, detail="Token requerido")
@@ -50,6 +49,33 @@ def get_my_progress_by_challenge(
         return progress_service.get_progress_by_user_and_challenge_service(
             user_id,
             challenge_id
+        )
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+# Obtener resumen del progreso del usuario
+@router.get("/me/summary", response_model=ProgressSummaryResponse)
+def get_profile_progress_summary(
+    request: Request,
+    user_data: dict = Depends(get_current_user)
+):
+    try:
+        user_id = user_data["sub"]
+
+        auth_header = request.headers.get("Authorization")
+
+        if not auth_header:
+            raise HTTPException(
+                status_code=401,
+                detail="Token requerido"
+            )
+
+        token = auth_header.split(" ")[1]
+
+        return progress_service.get_profile_progress_summary_service(
+            user_id,
+            token
         )
 
     except ValueError as e:

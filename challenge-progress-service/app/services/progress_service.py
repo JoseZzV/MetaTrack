@@ -2,6 +2,8 @@ from fastapi import HTTPException
 from datetime import date, datetime, timezone
 from app.repositories import progress_repository
 from app.clients.participation_client import get_my_participation_by_challenge
+from app.clients.participation_client import get_my_participations
+from app.clients.challenge_client import get_challenge_by_id
 
 
 def _format_progress(progress: dict) -> dict:
@@ -68,3 +70,56 @@ def get_progress_by_user_and_challenge_service(user_id: str, challenge_id: str):
     )
 
     return [_format_progress(p) for p in progress_list]
+
+# Obtener resumen del progreso del usuario
+def get_profile_progress_summary_service(user_id: str, token: str):
+
+    # 1. obtener progreso reciente
+    progress_list = progress_repository.find_recent_by_user(user_id)
+
+    recent_progress = [
+        _format_progress(progress)
+        for progress in progress_list[:5]
+    ]
+
+    # 2. obtener participaciones
+    participations = get_my_participations(token)
+
+    active_challenges = 0
+    completed_challenges = 0
+
+    # 3. contar retos activos y completados
+    if participations:
+
+        for participation in participations:
+
+            challenge = get_challenge_by_id(
+                participation["challenge_id"]
+            )
+
+            if not challenge:
+                continue
+
+            if challenge["status"] == "active":
+                active_challenges += 1
+
+            if challenge["status"] == "finished":
+                completed_challenges += 1
+
+    # 4. respuesta sin progreso
+    if not recent_progress:
+
+        return {
+            "recent_progress": [],
+            "active_challenges": active_challenges,
+            "completed_challenges": completed_challenges,
+            "message": "Aún no has registrado progreso"
+        }
+
+    # 5. respuesta normal
+    return {
+        "recent_progress": recent_progress,
+        "active_challenges": active_challenges,
+        "completed_challenges": completed_challenges,
+        "message": None
+    }

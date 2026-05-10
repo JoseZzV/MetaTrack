@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import datetime, date
-from typing import Optional
+from typing import List, Optional
 
 class ProgressCreate(BaseModel):
     challenge_id: str
@@ -15,3 +15,9 @@ class ProgressResponse(BaseModel):
     progress_date: datetime
     description: str
     created_at: datetime
+
+class ProgressSummaryResponse(BaseModel):
+    recent_progress: List[ProgressResponse]
+    active_challenges: int
+    completed_challenges: int
+    message: Optional[str] = None
