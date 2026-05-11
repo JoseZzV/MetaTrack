@@ -60,6 +60,13 @@ def update_reto(
         )
 
     except ValueError as e:
+
+        if "No tienes permiso" in str(e):
+            raise HTTPException(status_code=403, detail=str(e))
+
+        if "Reto no encontrado" in str(e):
+            raise HTTPException(status_code=404, detail=str(e))
+
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -72,4 +79,11 @@ def delete_reto(
         user_id = user_data["sub"]
         reto_service.delete_reto_service(reto_id, user_id)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+
+        if "No tienes permiso" in str(e):
+            raise HTTPException(status_code=403, detail=str(e))
+
+        if "Reto no encontrado" in str(e):
+            raise HTTPException(status_code=404, detail=str(e))
+
+        raise HTTPException(status_code=400, detail=str(e))
