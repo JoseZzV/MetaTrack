@@ -62,7 +62,10 @@ def create_progress_service(data, user_id: str, token: str):
 
 
 # Obtener progreso del usuario en un reto
-def get_progress_by_user_and_challenge_service(user_id: str, challenge_id: str):
+def get_progress_by_user_and_challenge_service(
+    user_id: str,
+    challenge_id: str
+):
 
     progress_list = progress_repository.find_by_user_and_challenge(
         user_id,
@@ -71,8 +74,12 @@ def get_progress_by_user_and_challenge_service(user_id: str, challenge_id: str):
 
     return [_format_progress(p) for p in progress_list]
 
+
 # Obtener resumen del progreso del usuario
-def get_profile_progress_summary_service(user_id: str, token: str):
+def get_profile_progress_summary_service(
+    user_id: str,
+    token: str
+):
 
     # 1. obtener progreso reciente
     progress_list = progress_repository.find_recent_by_user(user_id)
@@ -100,9 +107,14 @@ def get_profile_progress_summary_service(user_id: str, token: str):
             if not challenge:
                 continue
 
-            if challenge["status"] == "active":
+            # reto activo + participación activa
+            if (
+                participation["status"] == "active"
+                and challenge["status"] == "active"
+            ):
                 active_challenges += 1
 
+            # reto finalizado
             if challenge["status"] == "finished":
                 completed_challenges += 1
 

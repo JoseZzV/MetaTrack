@@ -1,17 +1,20 @@
 from bson import ObjectId
 from app.repositories import reto_repository
-from datetime import datetime, timezone
+from datetime import datetime
 
 # Helper para convertir ObjectId a str
 def _format_reto(reto: dict) -> dict:
-    now = datetime.now(timezone.utc)
+    now = datetime.utcnow()
+
     if reto["status"] != "cancelled":
         if reto["end_date"] < now:
             reto["status"] = "finished"
         else:
             reto["status"] = "active"
+
     reto["id"] = str(reto["_id"])
     del reto["_id"]
+
     return reto
 
 
@@ -59,11 +62,13 @@ def update_reto_service(
 
     # Bloquear campos sensibles
     forbidden_fields = {"creator_user_id", "created_at", "_id", "is_deleted"}
+
     for field in forbidden_fields:
         update_data.pop(field, None)
 
     # Obtener reto actual
     current_reto = reto_repository.get_reto_by_id(reto_id)
+
     if not current_reto:
         raise ValueError("Reto no encontrado")
 
@@ -93,6 +98,7 @@ def delete_reto_service(
         raise ValueError("ID inválido")
 
     current_reto = reto_repository.get_reto_by_id(reto_id)
+
     if not current_reto:
         raise ValueError("Reto no encontrado")
 

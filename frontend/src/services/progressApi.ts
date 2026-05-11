@@ -39,3 +39,15 @@ export const getMyProgressByChallenge = async (challengeId: string) => {
   const res = await progressApi.get(`/progress/challenge/${challengeId}/me`);
   return res.data as ProgressItem[];
 };
+
+export type ProgressSummary = {
+  recent_progress: ProgressItem[];
+  active_challenges: number;
+  completed_challenges: number;
+  message: string | null;
+};
+
+export const getProgressSummary = async () => {
+  const res = await progressApi.get("/progress/me/summary");
+  return res.data as ProgressSummary;
+};

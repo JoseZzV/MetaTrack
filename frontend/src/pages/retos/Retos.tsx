@@ -266,22 +266,28 @@ export default function Retos() {
                   onClick={(e) => {
                     e.stopPropagation();
 
+                    if (reto.status === "finished") return;
+
                     if (joinedRetos.includes(reto.id)) {
                       handleAbandon(reto.id);
                     } else {
                       handleJoin(reto.id);
                     }
                   }}
-                  disabled={joiningId === reto.id}
-                  className={`btn-join ${
-                    joinedRetos.includes(reto.id) ? "btn-abandon" : ""
-                  }`}
+                  disabled={
+                    joiningId === reto.id || reto.status === "finished"
+                  }
+                  className={`btn-join ${joinedRetos.includes(reto.id) ? "btn-abandon" : ""
+                    } ${reto.status === "finished" ? "btn-disabled" : ""
+                    }`}
                 >
-                  {joiningId === reto.id
-                    ? "Procesando..."
-                    : joinedRetos.includes(reto.id)
-                      ? "Abandonar reto"
-                      : "Unirme al reto"}
+                  {reto.status === "finished"
+                    ? "Reto finalizado"
+                    : joiningId === reto.id
+                      ? "Procesando..."
+                      : joinedRetos.includes(reto.id)
+                        ? "Abandonar reto"
+                        : "Unirme al reto"}
                 </button>
               </article>
             ))}
