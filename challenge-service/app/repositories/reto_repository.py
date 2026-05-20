@@ -19,10 +19,17 @@ def create_reto(data: dict) -> dict:
 
 
 #  Obtener todos los retos activos
-def get_retos() -> list:
-    retos = collection.find({"is_deleted": False})
-    return list(retos)
+def get_retos(type=None, sort_by=None, order="asc") -> list:
+    query = {"is_deleted": False}
+    if type: 
+        query["type"] = type
 
+    retos = collection.find(query)
+    #ordenar por fecha
+    if sort_by == "start_date":
+        sort_order = 1 if order == "asc" else -1
+        retos = retos.sort("start_date", sort_order)
+    return list(retos)
 
 #  Obtener reto por ID
 def get_reto_by_id(reto_id: str) -> dict | None:

@@ -31,9 +31,45 @@ def create_reto_service(data: dict) -> dict:
 
 
 # Obtener todos los retos
-def get_retos_service() -> list:
-    retos = reto_repository.get_retos()
-    return [_format_reto(r) for r in retos]
+def get_retos_service(type=None, duration_days=None, sort_by=None, order="asc") -> list:
+
+    if duration_days is not None and duration_days <= 0:
+        raise ValueError("La duración debe ser mayor a 0")
+
+    allowed_sort_fields = {"start_date", "duration"}
+
+    if sort_by and sort_by not in allowed_sort_fields:
+        raise ValueError("Criterio de orden inválido")
+
+    
+    allowed_orders = {"asc", "desc"}
+
+    if order not in allowed_orders:
+        raise ValueError("Orden inválido")
+
+    retos = reto_repository.get_retos(
+        type=type,
+        sort_by=sort_by,
+        order=order
+    )
+
+    if duration_days is not None:
+        retos = [
+            reto for reto in retos
+            if _get_duration_days(reto) == duration_days
+        ]
+
+    retos = [_format_reto(r) for r in retos]
+
+    if sort_by == "duration":
+
+        retos = sorted(
+            retos,
+            key=lambda reto: _get_duration_days(reto),
+            reverse=(order == "desc")
+        )
+
+    return retos
 
 
 # Obtener reto por ID
@@ -51,11 +87,7 @@ def get_reto_by_id_service(reto_id: str) -> dict:
 
 
 # Actualizar reto
-def update_reto_service(
-    reto_id: str,
-    update_data: dict,
-    user_id: str
-) -> dict:
+def update_reto_service(reto_id: str, update_data: dict, user_id: str) -> dict:
 
     if not ObjectId.is_valid(reto_id):
         raise ValueError("ID inválido")
@@ -112,3 +144,7 @@ def delete_reto_service(
         raise ValueError("Reto no encontrado")
 
     return True
+
+# Helper para calcular duración en días
+def _get_duration_days(reto: dict) -> int:
+    return (reto["end_date"] - reto["start_date"]).days

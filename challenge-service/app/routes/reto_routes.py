@@ -31,8 +31,16 @@ def create_reto(
 
 # Obtener todos los retos
 @router.get("/", response_model=List[RetoResponse])
-def get_retos():
-    return reto_service.get_retos_service()
+def get_retos(type: str = None, duration_days: int = None, sort_by: str = None, order: str = "asc"):
+    try:
+        return reto_service.get_retos_service(
+          type=type,
+          duration_days=duration_days,
+          sort_by=sort_by,
+          order=order
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 # Obtener reto por ID
