@@ -38,6 +38,12 @@ export default function Retos() {
   const [retos, setRetos] = useState<Reto[]>([]);
   const [q, setQ] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+
+  const [selectedType, setSelectedType] = useState("");
+  const [durationDays, setDurationDays] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [order, setOrder] = useState("asc");
+
   const [joiningId, setJoiningId] = useState<string | null>(null);
   const [joinedRetos, setJoinedRetos] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -49,8 +55,25 @@ export default function Retos() {
   useEffect(() => {
     const fetchRetos = async () => {
       try {
-        const data = await getRetos();
-        console.log("Retos desde backend:", data);
+        const params: any = {};
+
+        if (selectedType) {
+          params.type = selectedType;
+        }
+
+        if (durationDays) {
+          params.duration_days = Number(durationDays);
+        }
+
+        if (sortBy) {
+          params.sort_by = sortBy;
+          params.order = order;
+        }
+
+        const data = await getRetos(params);
+
+        console.log("Retos filtrados:", data);
+
         setRetos(data);
       } catch (error) {
         console.error("Error cargando retos:", error);
@@ -58,7 +81,7 @@ export default function Retos() {
     };
 
     fetchRetos();
-  }, []);
+  }, [selectedType, durationDays, sortBy, order]);
 
   useEffect(() => {
     const fetchParticipations = async () => {
@@ -91,6 +114,7 @@ export default function Retos() {
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();
+
     if (!term) return retos;
 
     return retos.filter(
@@ -145,6 +169,7 @@ export default function Retos() {
       await abandonReto(selectedRetoId);
 
       setJoinedRetos((prev) => prev.filter((id) => id !== selectedRetoId));
+
       setSuccessMessage("Abandonaste el reto correctamente");
     } catch (error: any) {
       console.error("Error al abandonar el reto:", error);
@@ -185,6 +210,7 @@ export default function Retos() {
         <div className="retos-top">
           <div>
             <h1 className="retos-h1">Explora retos</h1>
+
             <p className="retos-sub">
               Encuentra el reto perfecto para alcanzar tus objetivos
             </p>
@@ -199,6 +225,7 @@ export default function Retos() {
         <div className="retos-toolbar">
           <div className="searchBox">
             <Search size={18} className="searchIcon" />
+
             <input
               className="searchInput"
               value={q}
@@ -219,19 +246,70 @@ export default function Retos() {
 
         {showFilters && (
           <div className="filtersPanel">
-            <div className="filtersTitle">Filtros</div>
-            <div className="filtersRow">
-              <span className="pill">Categoría</span>
-              <span className="pill">Dificultad</span>
-              <span className="pill">Duración</span>
-              <span className="pill">Puntos</span>
+            <div className="filtersTitle">Filtros y orden</div>
+
+            <div className="filtersColumn">
+              <select
+                value={selectedType}
+                onChange={(e) => setSelectedType(e.target.value)}
+                className="filterSelect"
+              >
+                <option value="">Todas las categorías</option>
+                <option value="academico">Académico</option>
+                <option value="deporte">Deporte</option>
+                <option value="salud">Salud</option>
+                <option value="productividad">Productividad</option>
+                <option value="personal">Personal</option>
+              </select>
+
+              <select
+                value={durationDays}
+                onChange={(e) => setDurationDays(e.target.value)}
+                className="filterSelect"
+              >
+                <option value="">Todas las duraciones</option>
+                <option value="7">7 días</option>
+                <option value="15">15 días</option>
+                <option value="30">30 días</option>
+              </select>
+
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="filterSelect"
+              >
+                <option value="">Sin ordenar</option>
+                <option value="start_date">Fecha</option>
+                <option value="duration">Duración</option>
+              </select>
+
+              <select
+                value={order}
+                onChange={(e) => setOrder(e.target.value)}
+                className="filterSelect"
+              >
+                <option value="asc">Ascendente</option>
+                <option value="desc">Descendente</option>
+              </select>
+
+              <button
+                className="clearFiltersBtn"
+                onClick={() => {
+                  setSelectedType("");
+                  setDurationDays("");
+                  setSortBy("");
+                  setOrder("asc");
+                }}
+              >
+                Limpiar filtros
+              </button>
             </div>
           </div>
         )}
 
         {filtered.length === 0 ? (
           <div className="retos-empty">
-            No hay retos disponibles en este momento.
+            No hay retos disponibles con esos criterios.
           </div>
         ) : (
           <section className="retos-grid">
@@ -249,15 +327,16 @@ export default function Retos() {
 
                 <div className="reto-meta">
                   <span className="reto-type">
-                    {reto.type.charAt(0).toUpperCase() + reto.type.slice(1)}
+                    {reto.type.charAt(0).toUpperCase() +
+                      reto.type.slice(1)}
                   </span>
 
                   <span className="reto-status">
                     {reto.status === "active"
                       ? "Activo"
                       : reto.status === "finished"
-                        ? "Finalizado"
-                        : "Cancelado"}
+                      ? "Finalizado"
+                      : "Cancelado"}
                   </span>
                 </div>
 
@@ -275,19 +354,26 @@ export default function Retos() {
                     }
                   }}
                   disabled={
-                    joiningId === reto.id || reto.status === "finished"
+                    joiningId === reto.id ||
+                    reto.status === "finished"
                   }
-                  className={`btn-join ${joinedRetos.includes(reto.id) ? "btn-abandon" : ""
-                    } ${reto.status === "finished" ? "btn-disabled" : ""
-                    }`}
+                  className={`btn-join ${
+                    joinedRetos.includes(reto.id)
+                      ? "btn-abandon"
+                      : ""
+                  } ${
+                    reto.status === "finished"
+                      ? "btn-disabled"
+                      : ""
+                  }`}
                 >
                   {reto.status === "finished"
                     ? "Reto finalizado"
                     : joiningId === reto.id
-                      ? "Procesando..."
-                      : joinedRetos.includes(reto.id)
-                        ? "Abandonar reto"
-                        : "Unirme al reto"}
+                    ? "Procesando..."
+                    : joinedRetos.includes(reto.id)
+                    ? "Abandonar reto"
+                    : "Unirme al reto"}
                 </button>
               </article>
             ))}
@@ -298,6 +384,7 @@ export default function Retos() {
           <div className="modal-overlay">
             <div className="modal-box">
               <h3 className="modal-title">Abandonar reto</h3>
+
               <p className="modal-text">
                 ¿Estás seguro de que deseas abandonar este reto?
               </p>

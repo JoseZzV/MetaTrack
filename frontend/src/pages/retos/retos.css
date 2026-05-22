@@ -486,6 +486,77 @@
   color: white !important;
 }
 
+.filtersColumn {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.filterSelect {
+  min-width: 180px;
+
+  padding: 12px 14px;
+  border-radius: 14px;
+
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(245, 250, 255, 0.95);
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.filterSelect:hover {
+  border-color: rgba(47, 93, 255, 0.25);
+}
+
+.filterSelect:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.clearFiltersBtn {
+  padding: 12px 18px;
+  border-radius: 14px;
+
+  border: 1px solid rgba(47, 93, 255, 0.25);
+
+  background: linear-gradient(
+    180deg,
+    rgba(47, 93, 255, 0.18),
+    rgba(47, 93, 255, 0.12)
+  );
+
+  color: #1d4ed8;
+
+  font-family: "MetaSubtitle", sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearFiltersBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px rgba(47, 93, 255, 0.15);
+}
+
+@media (max-width: 620px) {
+  .filtersColumn {
+    flex-direction: column;
+  }
+
+  .filterSelect,
+  .clearFiltersBtn {
+    width: 100%;
+  }
+}
 @keyframes modalFadeIn {
   from {
     opacity: 0;

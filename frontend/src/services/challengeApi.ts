@@ -24,8 +24,16 @@ export const createReto = async (data: any) => {
 };
 
 // obtener todos los retos
-export const getRetos = async () => {
-  const res = await challengeApi.get("/retos/");
+export const getRetos = async (params?: {
+  type?: string;
+  duration_days?: number;
+  sort_by?: string;
+  order?: string;
+}) => {
+  const res = await challengeApi.get("/retos/", {
+    params,
+  });
+
   return res.data;
 };
 
