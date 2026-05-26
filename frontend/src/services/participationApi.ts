@@ -39,3 +39,21 @@ export const abandonReto = async (challengeId: string) => {
   );
   return res.data;
 };
+
+// Completar reto
+export const completeReto = async (challengeId: string) => {
+  const res = await participationApi.patch(
+    `/participations/${challengeId}/complete`
+  );
+
+  return res.data;
+};
+
+// Obtener recompensas del usuario
+export const getMyRewards = async () => {
+  const res = await participationApi.get(
+    "/participations/me/rewards"
+  );
+
+  return res.data;
+};

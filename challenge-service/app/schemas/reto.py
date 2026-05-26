@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Optional
 from enum import Enum
 
+
 class RetoTipo(str, Enum):
     academico = "academico"
     deporte = "deporte"
@@ -16,42 +17,44 @@ class RetoStatus(str, Enum):
     finished = "finished"
     cancelled = "cancelled"
 
-#  Base compartida
+# Base compartida
 class RetoBase(BaseModel):
     title: str = Field(..., min_length=3, max_length=100)
     description: Optional[str] = None
-    type: RetoTipo = RetoTipo.personal  # academico | deporte | salud | productividad | personal
+    type: RetoTipo = RetoTipo.personal
     rules: Optional[str] = None
-
     start_date: datetime
     end_date: datetime
-    points: int = Field(..., ge=1)
+    points: int = Field(default=0, ge=0)
 
 
-#  Crear reto
+# Crear reto
 class RetoCreate(RetoBase):
     pass
 
-
-#  Actualizar reto
+# Actualizar reto
 class RetoUpdate(BaseModel):
-    title: Optional[str] = Field(None, min_length=3, max_length=100)
+    title: Optional[str] = Field(
+        None,
+        min_length=3,
+        max_length=100
+    )
+
     description: Optional[str] = None
     type: Optional[RetoTipo] = None
     rules: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    status: RetoStatus = RetoStatus.active  # active | finished | cancelled
+    status: RetoStatus = RetoStatus.active
 
-
-#  Respuesta que devuelve la API
+# Respuesta API
 class RetoResponse(RetoBase):
     id: str
+
     creator_user_id: str
     status: str
     created_at: datetime
     updated_at: datetime
-
     model_config = {
         "from_attributes": True
     }

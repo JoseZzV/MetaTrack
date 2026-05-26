@@ -8,6 +8,7 @@ import RetoDetail from "./pages/retos/RetoDetail";
 import Profile from "./pages/profile/Profile";
 import Progreso from "./pages/progreso/Progreso";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
+import Rewards from "./pages/recompensas/Rewards";
 import "./App.css";
 
 export default function App() {
@@ -66,6 +67,15 @@ export default function App() {
         element={
           <ProtectedRoute>
             <Progreso />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/recompensas"
+        element={
+          <ProtectedRoute>
+            <Rewards />
           </ProtectedRoute>
         }
       />

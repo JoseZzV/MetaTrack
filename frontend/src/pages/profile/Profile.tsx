@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import Navbar from "../../components/layout/Navbar";
-import { getMyParticipations } from "../../services/participationApi";
+
+import {
+    getMyParticipations,
+    getMyRewards,
+} from "../../services/participationApi";
+
 import { getRetos } from "../../services/challengeApi";
+
 import {
     getProgressSummary,
     type ProgressSummary,
 } from "../../services/progressApi";
+
 import "./profile.css";
 
 type UserInfo = {
@@ -17,6 +25,7 @@ type UserInfo = {
 type Participation = {
     challenge_id: string;
     status: "active" | "abandoned" | "completed";
+    earned_points?: number;
 };
 
 type Challenge = {
@@ -57,11 +66,18 @@ export default function Profile() {
     });
 
     const [myChallenges, setMyChallenges] = useState<Challenge[]>([]);
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState<string | null>(null);
 
     const [progressSummary, setProgressSummary] =
         useState<ProgressSummary | null>(null);
+
+    const [rewards, setRewards] = useState({
+        total_points: 0,
+        completed_challenges: 0,
+    });
 
     useEffect(() => {
         loadProfile();
@@ -70,30 +86,46 @@ export default function Profile() {
     const loadProfile = async () => {
         try {
             setLoading(true);
+
             setError(null);
 
             const user = getUserInfoFromStorage();
+
             setUserInfo(user);
 
-            const participationsData = await getMyParticipations();
+            const participationsData =
+                await getMyParticipations();
+
             const retosData = await getRetos();
 
-            const summaryData = await getProgressSummary();
+            const summaryData =
+                await getProgressSummary();
+
             setProgressSummary(summaryData);
 
-            const participations: Participation[] = Array.isArray(participationsData)
-                ? participationsData
-                : participationsData?.participations || [];
+            const rewardsData = await getMyRewards();
 
-            const retos: Challenge[] = Array.isArray(retosData)
+            setRewards(rewardsData);
+
+            const participations: Participation[] =
+                Array.isArray(participationsData)
+                    ? participationsData
+                    : participationsData?.participations || [];
+
+            const retos: Challenge[] = Array.isArray(
+                retosData
+            )
                 ? retosData
                 : retosData?.retos || [];
 
-            const activeParticipations = participations.filter(
-                (p) => p.status === "active"
-            );
+            const activeParticipations =
+                participations.filter(
+                    (p) => p.status === "active"
+                );
 
-            const activeIds = activeParticipations.map((p) => p.challenge_id);
+            const activeIds = activeParticipations.map(
+                (p) => p.challenge_id
+            );
 
             const activeChallenges = retos.filter((r) =>
                 activeIds.includes(r.id)
@@ -102,6 +134,7 @@ export default function Profile() {
             setMyChallenges(activeChallenges);
         } catch (err) {
             console.error(err);
+
             setError("No se pudo cargar el perfil");
         } finally {
             setLoading(false);
@@ -115,12 +148,25 @@ export default function Profile() {
             <div className="profile-page">
                 <div className="profile-top">
                     <div>
-                        <h1 className="profile-h1">Mi perfil</h1>
+                        <h1 className="profile-h1">
+                            Mi perfil
+                        </h1>
 
                         <p className="profile-sub">
-                            Consulta tu información y los retos en los que participas.
+                            Consulta tu información y
+                            los retos en los que
+                            participas.
                         </p>
                     </div>
+
+                    <button
+                        className="profile-rewards-btn"
+                        onClick={() =>
+                            navigate("/recompensas")
+                        }
+                    >
+                        Ver recompensas
+                    </button>
                 </div>
 
                 {loading && (
@@ -139,11 +185,14 @@ export default function Profile() {
                     <>
                         <div className="profile-hero">
                             <div className="profile-hero-avatar">
-                                {userInfo.name.charAt(0).toUpperCase()}
+                                {userInfo.name
+                                    .charAt(0)
+                                    .toUpperCase()}
                             </div>
 
                             <div className="profile-hero-text">
                                 <h2>{userInfo.name}</h2>
+
                                 <p>{userInfo.email}</p>
                             </div>
                         </div>
@@ -176,7 +225,8 @@ export default function Profile() {
                                     </span>
 
                                     <p>
-                                        {progressSummary?.active_challenges ?? 0}
+                                        {progressSummary?.active_challenges ??
+                                            0}
                                     </p>
                                 </div>
 
@@ -186,7 +236,32 @@ export default function Profile() {
                                     </span>
 
                                     <p>
-                                        {progressSummary?.completed_challenges ?? 0}
+                                        {progressSummary?.completed_challenges ??
+                                            0}
+                                    </p>
+                                </div>
+
+                                <div className="profile-info-item">
+                                    <span className="profile-label">
+                                        Puntos acumulados
+                                    </span>
+
+                                    <p>
+                                        {
+                                            rewards.total_points
+                                        }
+                                    </p>
+                                </div>
+
+                                <div className="profile-info-item">
+                                    <span className="profile-label">
+                                        Retos completados
+                                    </span>
+
+                                    <p>
+                                        {
+                                            rewards.completed_challenges
+                                        }
                                     </p>
                                 </div>
                             </div>
@@ -197,20 +272,25 @@ export default function Profile() {
                                 Mis retos
                             </h2>
 
-                            {myChallenges.length > 0 ? (
+                            {myChallenges.length >
+                                0 ? (
                                 <div className="profile-retos-grid">
                                     {myChallenges
                                         .slice()
                                         .sort((a, b) => {
                                             if (
-                                                a.status === "active" &&
-                                                b.status !== "active"
+                                                a.status ===
+                                                "active" &&
+                                                b.status !==
+                                                "active"
                                             )
                                                 return -1;
 
                                             if (
-                                                a.status !== "active" &&
-                                                b.status === "active"
+                                                a.status !==
+                                                "active" &&
+                                                b.status ===
+                                                "active"
                                             )
                                                 return 1;
 
@@ -219,29 +299,41 @@ export default function Profile() {
                                         .map((challenge) => (
                                             <div
                                                 className="profile-reto-card"
-                                                key={challenge.id}
+                                                key={
+                                                    challenge.id
+                                                }
                                             >
                                                 <div className="profile-reto-header">
-                                                    <h3>{challenge.title}</h3>
+                                                    <h3>
+                                                        {
+                                                            challenge.title
+                                                        }
+                                                    </h3>
 
                                                     <div className="profile-reto-chips">
                                                         {challenge.type && (
                                                             <span className="profile-chip">
-                                                                {challenge.type}
+                                                                {
+                                                                    challenge.type
+                                                                }
                                                             </span>
                                                         )}
 
                                                         <span
-                                                            className={`profile-status-chip ${challenge.status === "finished"
-                                                                    ? "finished"
-                                                                    : challenge.status === "cancelled"
-                                                                        ? "cancelled"
-                                                                        : "active"
+                                                            className={`profile-status-chip ${challenge.status ===
+                                                                "finished"
+                                                                ? "finished"
+                                                                : challenge.status ===
+                                                                    "cancelled"
+                                                                    ? "cancelled"
+                                                                    : "active"
                                                                 }`}
                                                         >
-                                                            {challenge.status === "finished"
+                                                            {challenge.status ===
+                                                                "finished"
                                                                 ? "Finalizado"
-                                                                : challenge.status === "cancelled"
+                                                                : challenge.status ===
+                                                                    "cancelled"
                                                                     ? "Cancelado"
                                                                     : "Activo"}
                                                         </span>
@@ -256,13 +348,19 @@ export default function Profile() {
                                                 <div className="profile-reto-dates">
                                                     {challenge.start_date && (
                                                         <span>
-                                                            Inicio: {formatDate(challenge.start_date)}
+                                                            Inicio:{" "}
+                                                            {formatDate(
+                                                                challenge.start_date
+                                                            )}
                                                         </span>
                                                     )}
 
                                                     {challenge.end_date && (
                                                         <span>
-                                                            Fin: {formatDate(challenge.end_date)}
+                                                            Fin:{" "}
+                                                            {formatDate(
+                                                                challenge.end_date
+                                                            )}
                                                         </span>
                                                     )}
                                                 </div>
@@ -270,7 +368,9 @@ export default function Profile() {
                                                 <button
                                                     className="profile-view-btn"
                                                     onClick={() =>
-                                                        navigate(`/retos/${challenge.id}`)
+                                                        navigate(
+                                                            `/retos/${challenge.id}`
+                                                        )
                                                     }
                                                 >
                                                     Ver reto
@@ -280,7 +380,9 @@ export default function Profile() {
                                 </div>
                             ) : (
                                 <p className="profile-empty">
-                                    No participas en ningún reto actualmente.
+                                    No participas en
+                                    ningún reto
+                                    actualmente.
                                 </p>
                             )}
                         </div>
@@ -290,22 +392,29 @@ export default function Profile() {
                                 Progreso reciente
                             </h2>
 
-                            {progressSummary?.recent_progress?.length ? (
+                            {progressSummary?.recent_progress
+                                ?.length ? (
                                 <div className="profile-progress-list">
-                                    {progressSummary.recent_progress.map((item) => (
-                                        <div
-                                            key={item.id}
-                                            className="profile-progress-item"
-                                        >
-                                            <div className="profile-progress-date">
-                                                {formatDate(item.progress_date)}
-                                            </div>
+                                    {progressSummary.recent_progress.map(
+                                        (item) => (
+                                            <div
+                                                key={item.id}
+                                                className="profile-progress-item"
+                                            >
+                                                <div className="profile-progress-date">
+                                                    {formatDate(
+                                                        item.progress_date
+                                                    )}
+                                                </div>
 
-                                            <p className="profile-progress-text">
-                                                {item.description}
-                                            </p>
-                                        </div>
-                                    ))}
+                                                <p className="profile-progress-text">
+                                                    {
+                                                        item.description
+                                                    }
+                                                </p>
+                                            </div>
+                                        )
+                                    )}
                                 </div>
                             ) : (
                                 <p className="profile-empty">
