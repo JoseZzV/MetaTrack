@@ -135,3 +135,16 @@ def get_profile_progress_summary_service(
         "completed_challenges": completed_challenges,
         "message": None
     }
+
+# Verificar si el usuario tiene progreso en un reto
+def has_progress_by_user_and_challenge_service(
+    user_id: str,
+    challenge_id: str
+):
+
+    return {
+        "has_progress": progress_repository.has_progress_by_user_and_challenge(
+            user_id,
+            challenge_id
+        )
+    }

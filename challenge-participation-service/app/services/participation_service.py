@@ -2,6 +2,7 @@ from fastapi import HTTPException
 
 from app.repositories import participation_repository
 from app.clients.challenge_client import get_challenge_by_id
+from app.clients.progress_client import has_progress_by_challenge
 
 
 def _format_participation(participation: dict) -> dict:
@@ -117,6 +118,79 @@ def abandon_challenge_service(challenge_id: str, user_id: str):
 
     return _format_participation(updated)
 
+def complete_challenge_service(
+    challenge_id: str,
+    user_id: str,
+    token: str
+):
+
+    # 1. Buscar participación
+    participation = participation_repository.find_by_user_and_challenge(
+        user_id,
+        challenge_id
+    )
+
+    if not participation:
+        raise HTTPException(
+            status_code=404,
+            detail="No estás participando en este reto"
+        )
+
+    # 2. Validar estado actual
+    if participation["status"] == "abandoned":
+        raise HTTPException(
+            status_code=400,
+            detail="No puedes completar un reto abandonado"
+        )
+
+    if participation["status"] == "completed":
+        raise HTTPException(
+            status_code=400,
+            detail="Ya completaste este reto"
+        )
+
+    # 3. Obtener reto
+    challenge = get_challenge_by_id(challenge_id)
+
+    if not challenge:
+        raise HTTPException(
+            status_code=404,
+            detail="Challenge no encontrado"
+        )
+
+    # 4. Validar que el reto haya finalizado
+    if challenge["status"] != "finished":
+        raise HTTPException(
+            status_code=400,
+            detail="El reto aún no ha finalizado"
+        )
+
+    # 5. Validar progreso registrado
+    progress_response = has_progress_by_challenge(
+        token,
+        challenge_id
+    )
+
+    if not progress_response:
+        raise HTTPException(
+            status_code=400,
+            detail="No fue posible validar el progreso"
+        )
+
+    if not progress_response["has_progress"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Debes registrar progreso antes de completar el reto"
+        )
+
+    # 6. Asignar puntos y completar
+    completed = participation_repository.complete_participation(
+        str(participation["_id"]),
+        challenge["points"]
+    )
+
+    return _format_participation(completed)
+
 def get_participation_by_user_and_challenge_service(user_id: str, challenge_id: str):
 
     participation = participation_repository.find_by_user_and_challenge(
@@ -131,3 +205,7 @@ def get_participation_by_user_and_challenge_service(user_id: str, challenge_id: 
         )
 
     return _format_participation(participation)
+
+def get_rewards_summary_service(user_id: str):
+
+    return participation_repository.get_rewards_summary(user_id)

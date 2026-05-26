@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from typing import List
-from app.schemas.progress_schema import ProgressCreate, ProgressResponse
+from app.schemas.progress_schema import ProgressCreate, ProgressResponse, HasProgressResponse
 from app.services import progress_service
 from app.core.auth import get_current_user
 from app.schemas.progress_schema import ProgressSummaryResponse
@@ -76,6 +76,24 @@ def get_profile_progress_summary(
         return progress_service.get_profile_progress_summary_service(
             user_id,
             token
+        )
+
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+# Verificar si el usuario tiene progreso en un reto
+@router.get("/challenge/{challenge_id}/has-progress",response_model=HasProgressResponse)
+def has_progress_by_challenge(
+    challenge_id: str,
+    user_data: dict = Depends(get_current_user)
+):
+    try:
+
+        user_id = user_data["sub"]
+
+        return progress_service.has_progress_by_user_and_challenge_service(
+            user_id,
+            challenge_id
         )
 
     except ValueError as e:

@@ -25,6 +25,7 @@ class RetoBase(BaseModel):
 
     start_date: datetime
     end_date: datetime
+    points: int = Field(..., ge=1)
 
 
 #  Crear reto

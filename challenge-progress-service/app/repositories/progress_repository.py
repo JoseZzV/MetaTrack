@@ -47,3 +47,13 @@ def find_recent_by_user(user_id: str):
     }).sort("created_at", -1)
 
     return list(progress_list)
+
+# Verificar si existe progreso del usuario en un reto
+def has_progress_by_user_and_challenge(user_id: str, challenge_id: str):
+
+    progress = collection.find_one({
+        "user_id": user_id,
+        "challenge_id": challenge_id
+    })
+
+    return progress is not None

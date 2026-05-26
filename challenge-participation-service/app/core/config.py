@@ -10,3 +10,7 @@ CHALLENGE_SERVICE_URL = os.getenv(
     "CHALLENGE_SERVICE_URL",
     "http://localhost:8001"
 )
+PROGRESS_SERVICE_URL = os.getenv(
+    "PROGRESS_SERVICE_URL",
+    "http://localhost:8003"
+)

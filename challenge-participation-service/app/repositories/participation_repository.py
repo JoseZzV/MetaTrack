@@ -57,3 +57,41 @@ def update_status(participation_id: str, new_status: str):
     )
 
     return collection.find_one({"_id": ObjectId(participation_id)})
+
+# Marcar participación como completada
+def complete_participation(participation_id: str, earned_points: int):
+
+    now = datetime.now(timezone.utc)
+
+    collection.update_one(
+        {"_id": ObjectId(participation_id)},
+        {
+            "$set": {
+                "status": "completed",
+                "earned_points": earned_points,
+                "rewarded_at": now
+            }
+        }
+    )
+
+    return collection.find_one({
+        "_id": ObjectId(participation_id)
+    })
+
+# Obtener resumen de recompensas del usuario
+def get_rewards_summary(user_id: str):
+
+    participations = list(collection.find({
+        "user_id": user_id,
+        "status": "completed"
+    }))
+
+    total_points = sum(
+        participation.get("earned_points", 0)
+        for participation in participations
+    )
+
+    return {
+        "total_points": total_points,
+        "completed_challenges": len(participations)
+    }

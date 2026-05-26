@@ -21,3 +21,6 @@ class ProgressSummaryResponse(BaseModel):
     active_challenges: int
     completed_challenges: int
     message: Optional[str] = None
+
+class HasProgressResponse(BaseModel):
+    has_progress: bool

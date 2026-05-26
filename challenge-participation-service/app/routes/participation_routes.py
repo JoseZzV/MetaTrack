@@ -1,7 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Request
 from typing import List
 
-from app.schemas.participation_schema import ParticipationCreate, ParticipationResponse
+from app.schemas.participation_schema import ParticipationCreate, ParticipationResponse, RewardsSummaryResponse
 from app.services import participation_service
 from app.core.auth import get_current_user
 
@@ -63,6 +63,27 @@ def abandon_challenge(
         user_id
     )
 
+@router.patch("/{challenge_id}/complete", response_model=ParticipationResponse)
+def complete_challenge(challenge_id: str, request: Request, user_data: dict = Depends(get_current_user)):
+
+    user_id = user_data["sub"]
+
+    auth_header = request.headers.get("Authorization")
+
+    if not auth_header:
+        raise HTTPException(
+            status_code=401,
+            detail="Token requerido"
+        )
+
+    token = auth_header.split(" ")[1]
+
+    return participation_service.complete_challenge_service(
+        challenge_id,
+        user_id,
+        token
+    )
+
 @router.get("/{challenge_id}/me", response_model=ParticipationResponse)
 def get_my_participation_by_challenge(
     challenge_id: str,
@@ -73,4 +94,13 @@ def get_my_participation_by_challenge(
     return participation_service.get_participation_by_user_and_challenge_service(
         user_id,
         challenge_id
+    )
+
+@router.get("/me/rewards", response_model=RewardsSummaryResponse)
+def get_rewards_summary(user_data: dict = Depends(get_current_user)):
+
+    user_id = user_data["sub"]
+
+    return participation_service.get_rewards_summary_service(
+        user_id
     )
