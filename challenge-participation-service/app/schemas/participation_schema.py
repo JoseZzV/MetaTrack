@@ -19,3 +19,4 @@ class ParticipationResponse(BaseModel):
 class RewardsSummaryResponse(BaseModel):
     total_points: int
     completed_challenges: int
+    badges: list[str]

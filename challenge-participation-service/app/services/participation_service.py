@@ -208,4 +208,25 @@ def get_participation_by_user_and_challenge_service(user_id: str, challenge_id: 
 
 def get_rewards_summary_service(user_id: str):
 
-    return participation_repository.get_rewards_summary(user_id)
+    rewards_summary = participation_repository.get_rewards_summary(
+        user_id
+    )
+
+    badges = []
+
+    completed_challenges = rewards_summary["completed_challenges"]
+    total_points = rewards_summary["total_points"]
+
+    if completed_challenges >= 1:
+        badges.append("Primer reto completado")
+
+    if completed_challenges >= 5:
+        badges.append("Persistente")
+
+    if total_points >= 100:
+        badges.append("Experto en retos")
+
+    return {
+        **rewards_summary,
+        "badges": badges
+    }
